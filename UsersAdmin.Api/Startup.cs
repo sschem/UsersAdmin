@@ -6,15 +6,19 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UsersAdmin.Data;
-using UsersAdmin.Core;
 using UsersAdmin.Data.Repositories;
 using UsersAdmin.Core.Services;
 using UsersAdmin.Services;
 using UsersAdmin.Core.Repositories;
-using UsersAdmin.Api.Util.Config;
 using AutoMapper;
-using UsersAdmin.Api.Util.ExtensionMethods;
 using Microsoft.OpenApi.Models;
+using UsersAdmin.Api.ExtensionMethods;
+using UsersAdmin.Api.Config;
+using System;
+using System.Linq;
+using FluentValidation;
+using System.Reflection;
+using FluentValidation.AspNetCore;
 
 namespace UsersAdmin.Api
 {
@@ -27,6 +31,13 @@ namespace UsersAdmin.Api
 
         public IConfiguration Configuration { get; }
 
+        public Assembly CoreAssembly
+        {
+            get => AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => x.FullName.Contains("UsersAdmin.Core"))
+                .FirstOrDefault();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -37,15 +48,18 @@ namespace UsersAdmin.Api
             );
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(this.CoreAssembly);
+
+            services.AddMvc().AddFluentValidation();            
+            services.AddValidatorsFromAssembly(this.CoreAssembly);
 
             services.AddTransient<ISystemRepository, SystemRepository>();
             services.AddTransient<ISystemService, SystemService>();
 
             services.AddControllers(options =>
             {
-                options.Filters.Add<Util.Filters.ModelValidationActionFilter>(1);
-                options.Filters.Add<Util.Filters.AnswerExceptionActionFilter>(3);
+                options.Filters.Add<Filters.ModelValidationActionFilter>(1);
+                options.Filters.Add<Filters.AnswerExceptionActionFilter>(3);
             })
             .ConfigureApiBehaviorOptions(options =>
             {
@@ -65,9 +79,6 @@ namespace UsersAdmin.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            // loggerFactory.AddLog4Net();
-            // loggerFactory.AddNLog();
-
             app.UseStatusCodePages();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -78,16 +89,11 @@ namespace UsersAdmin.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
             }
-
-            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseCors();
-
-            // app.UseAuthorization();
 
             app.UseAddHeaderInfo();
 

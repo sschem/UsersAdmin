@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UsersAdmin.Core.Models;
+using UsersAdmin.Core.Model.System;
 
 namespace UsersAdmin.Core.Services
 {
-    public interface ISystemService : IService<SystemEntity>
+    public interface ISystemService : IService<SystemDto, SystemEntity>
     {
-        Task<IEnumerable<SystemEntity>> GetByUser(string userId);
+        Task<IEnumerable<SystemDto>> GetByUserAsync(string userId);
+
+        Task<IEnumerable<SystemItemDto>> GetAllItemsAsync();
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using UsersAdmin.Core.Models;
+using UsersAdmin.Core.Model.System;
 using UsersAdmin.Core.Repositories;
 
 namespace UsersAdmin.Data.Repositories

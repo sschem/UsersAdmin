@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UsersAdmin.Core.Models;
+using UsersAdmin.Core.Model.System;
 
 namespace UsersAdmin.Core.Repositories
 {

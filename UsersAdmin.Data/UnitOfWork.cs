@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using UsersAdmin.Core;
 using UsersAdmin.Core.Repositories;
 using UsersAdmin.Data.Repositories;
 

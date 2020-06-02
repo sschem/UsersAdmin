@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using UsersAdmin.Core.Models;
+using UsersAdmin.Core.Model.System;
 using UsersAdmin.Data.Configurations;
 
 namespace UsersAdmin.Data

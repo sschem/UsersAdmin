@@ -1,6 +1,6 @@
-using UsersAdmin.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using UsersAdmin.Core.Model.System;
 
 namespace UsersAdmin.Data.Configurations
 {
