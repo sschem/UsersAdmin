@@ -6,6 +6,6 @@ namespace UsersAdmin.Core.Repositories
 {
     public interface ISystemRepository : IRepository<SystemEntity>
     {
-        Task<IEnumerable<SystemEntity>> SelectByUser(string userId);
+        SystemEntity SelectIncludingUsers(string systemId);
     }
 }

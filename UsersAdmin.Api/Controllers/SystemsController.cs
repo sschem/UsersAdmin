@@ -31,10 +31,18 @@ namespace UsersAdmin.Api.Controllers
 
         [HttpGet("{systemId}")]
         [TypeFilter(typeof(JsonLogResultFilter))]
-        public async Task<ActionResult<Answer<IEnumerable<SystemDto>>>> GetSystem(string systemId)
+        public async Task<ActionResult<Answer<SystemDto>>> GetSystem(string systemId)
         {
             var systemDto = await _service.GetByIdAsync(systemId);
             return Ok(new Answer<SystemDto>(systemDto));
+        }
+
+        [HttpGet("{systemId}/withUsers")]
+        [TypeFilter(typeof(JsonLogResultFilter))]
+        public ActionResult<Answer<SystemDto>> GetWithUsers(string systemId)
+        {
+            var systems = _service.GetWithUsers(systemId);
+            return Ok(new Answer<SystemDto>(systems));
         }
 
         [HttpPost]

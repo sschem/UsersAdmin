@@ -10,9 +10,9 @@ namespace UsersAdmin.Data.Repositories
 {
     public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly DbContext Context;
+        protected readonly AuthDbContext Context;
         
-        public RepositoryBase(DbContext context)
+        public RepositoryBase(AuthDbContext context)
         {
             this.Context = context;
         }

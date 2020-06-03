@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using UsersAdmin.Core.Model.Entities;
 using UsersAdmin.Core.Model.Mapping;
-using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
 
-namespace UsersAdmin.Core.Model.System
+namespace UsersAdmin.Core.Model.User
 {
-    public class SystemEntity : EntityBase, IMapFrom<SystemDto>, IIds
+    public class UserEntity : EntityBase, IMapFrom<UserDto>, IIds
     {
-        public SystemEntity() { }
+        public UserEntity() { }
 
         public string Id { get; set; }
+        public string Pass { get; set; }
         public string Name { get; set; }
+        public string Email { get; set; }
         public string Description { get; set; }
         public List<UserSystemEntity> UserSystemLst { get; set; }
 

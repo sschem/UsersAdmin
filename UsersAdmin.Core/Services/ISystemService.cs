@@ -6,7 +6,7 @@ namespace UsersAdmin.Core.Services
 {
     public interface ISystemService : IService<SystemDto, SystemEntity>
     {
-        Task<IEnumerable<SystemDto>> GetByUserAsync(string userId);
+        SystemDto GetWithUsers(string systemId);
 
         Task<IEnumerable<SystemItemDto>> GetAllItemsAsync();
     }

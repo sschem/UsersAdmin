@@ -2,9 +2,9 @@
     <PropertyGroup>
         <Company>Tatisoft</Company>
         <Authors>ssanch</Authors>
-        <Version>0.2.16</Version>
-        <AssemblyVersion>0.0.2.16</AssemblyVersion>
-        <FileVersion>0.0.2.16</FileVersion>
+        <Version>0.2.20</Version>
+        <AssemblyVersion>0.0.2.20</AssemblyVersion>
+        <FileVersion>0.0.2.20</FileVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     </PropertyGroup>
 </Project>

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using UsersAdmin.Data;
 using UsersAdmin.Data.Repositories;
 using UsersAdmin.Core.Services;
@@ -50,21 +49,23 @@ namespace UsersAdmin.Api
 
             services.AddAutoMapper(this.CoreAssembly);
 
-            services.AddMvc().AddFluentValidation();            
-            services.AddValidatorsFromAssembly(this.CoreAssembly);
-
             services.AddTransient<ISystemRepository, SystemRepository>();
             services.AddTransient<ISystemService, SystemService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserService, UserService>();
 
             services.AddControllers(options =>
             {
                 options.Filters.Add<Filters.ModelValidationActionFilter>(1);
                 options.Filters.Add<Filters.AnswerExceptionActionFilter>(3);
             })
+            .AddFluentValidation(options =>
+                options.RegisterValidatorsFromAssembly(this.CoreAssembly)
+            )
             .ConfigureApiBehaviorOptions(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
+                options.SuppressModelStateInvalidFilter = true
+            )
+            .AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>
             {
@@ -77,14 +78,13 @@ namespace UsersAdmin.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseStatusCodePages();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UsersAdminApi V1");
-            });
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UsersAdminApi V1")
+            );
 
             if (env.IsDevelopment())
             {

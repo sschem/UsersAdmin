@@ -10,10 +10,9 @@ namespace UsersAdmin.Services
 {
     public class SystemService : ServiceBase<SystemDto, SystemEntity, ISystemRepository>, ISystemService
     {
-        protected override ISystemRepository _repository => _unitOfWork.Systems;
+        protected override ISystemRepository Repository => _unitOfWork.Systems;
 
-
-        public SystemService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
+       public SystemService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
 
         protected override void MapPropertiesForUpdate(SystemEntity outdatedEntity, SystemEntity newEntity)
         {
@@ -21,15 +20,16 @@ namespace UsersAdmin.Services
             outdatedEntity.Description = newEntity.Description;
         }
 
-        public async Task<IEnumerable<SystemDto>> GetByUserAsync(string userId)
+        public SystemDto GetWithUsers(string systemId)
         {
-            throw new NotImplementedException();
-            //return await MyRepository.SelectByUser(userId);
+            var entities = this.Repository.SelectIncludingUsers(systemId);
+            var system = _mapper.Map<SystemDto>(entities);
+            return system;
         }
 
         public async Task<IEnumerable<SystemItemDto>> GetAllItemsAsync()
         {
-            var entities = await _repository.SelectAllAsync();
+            var entities = await this.Repository.SelectAllAsync();
             var systemItems = _mapper.Map< IEnumerable<SystemItemDto>>(entities);
             return systemItems;
         }
