@@ -11,9 +11,12 @@ namespace UsersAdmin.Data.Repositories
             : base(context)
         { }
 
-        public SystemEntity SelectIncludingUsers(string userId)
+        public SystemEntity SelectIncludingUsers(string systemId)
         {
-            var entity = this.Context.Systems.Where(s => s.Id.ToUpper() == userId.ToUpper())
+            var entity = this.Context.Systems.Where(s => 
+                    !string.IsNullOrEmpty(systemId) 
+                    && s.Id.ToUpper() == systemId.ToUpper()
+                )
                 .Include(s => s.UserSystemLst)
                 .ThenInclude(us => us.User)
                 .FirstOrDefault();

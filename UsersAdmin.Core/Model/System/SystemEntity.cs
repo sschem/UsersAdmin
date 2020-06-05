@@ -9,7 +9,10 @@ namespace UsersAdmin.Core.Model.System
 {
     public class SystemEntity : EntityBase, IMapFrom<SystemDto>, IIds
     {
-        public SystemEntity() { }
+        public SystemEntity() 
+        {
+            this.UserSystemLst = new List<UserSystemEntity>();
+        }
 
         public string Id { get; set; }
         public string Name { get; set; }

@@ -14,7 +14,10 @@ namespace UsersAdmin.Data.Repositories
 
         public IEnumerable<UserEntity> SelectItemsByNameFilter(string nameFilter)
         {
-            Expression<Func<UserEntity, bool>> predicate = u => u.Name.ToUpper().Contains(nameFilter.ToUpper());
+            Expression<Func<UserEntity, bool>> predicate = u => 
+                !string.IsNullOrEmpty(nameFilter) && 
+                u.Name.ToUpper().Contains(nameFilter.ToUpper());
+            
             var entities = this.SelectByFilter(predicate);
             return entities;
         }

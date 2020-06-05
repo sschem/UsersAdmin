@@ -15,8 +15,8 @@ namespace UsersAdmin.Services
         protected abstract TRepository Repository { get; }
         protected readonly IMapper _mapper;
 
-        protected virtual string EntityNotFoundMessage { get { return "No se encontraron datos!"; } }
-        protected virtual string EntityAlreadyExists { get { return "Ya existe un objeto con la misma clave!"; } }
+        public virtual string EntityNotFoundMessage { get { return "No se encontraron datos!"; } }
+        public virtual string EntityAlreadyExists { get { return "Ya existe un objeto con la misma clave!"; } }
 
         public ServiceBase(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -39,6 +39,7 @@ namespace UsersAdmin.Services
         public async Task<TDto> AddAsync(TDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
+            
             var obtainedEntity = await this.Repository.SelectByIdAsync(entity.GetIds);
             if (obtainedEntity != null)
             {

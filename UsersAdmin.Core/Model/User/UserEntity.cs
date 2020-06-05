@@ -7,7 +7,10 @@ namespace UsersAdmin.Core.Model.User
 {
     public class UserEntity : EntityBase, IMapFrom<UserDto>, IIds
     {
-        public UserEntity() { }
+        public UserEntity()
+        {
+            this.UserSystemLst = new List<UserSystemEntity>();
+        }
 
         public string Id { get; set; }
         public string Pass { get; set; }

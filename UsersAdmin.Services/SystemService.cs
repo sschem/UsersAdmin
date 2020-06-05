@@ -22,8 +22,8 @@ namespace UsersAdmin.Services
 
         public SystemDto GetWithUsers(string systemId)
         {
-            var entities = this.Repository.SelectIncludingUsers(systemId);
-            var system = _mapper.Map<SystemDto>(entities);
+            var entity = this.Repository.SelectIncludingUsers(systemId);
+            var system = _mapper.Map<SystemDto>(entity);
             return system;
         }
 
