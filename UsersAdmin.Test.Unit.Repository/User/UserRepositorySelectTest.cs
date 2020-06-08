@@ -7,15 +7,21 @@ using Xunit;
 namespace UsersAdmin.Test.Unit.Repository.User
 {
     using static Testing;
-    public class UserRepositorySelectTest
+    public class UserRepositorySelectTest : RepositoryBaseSelectTest<UserEntity, UserRepository>
     {
+        public UserRepositorySelectTest()
+            : base(new UserRepositoryTest())
+        {
+
+        }
+
         [Fact]
         public async void UserRepository_SelectItemsByNameFilter_ValidateOk()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
-                UserRepository repo = new UserRepository(context);
-                UserEntity userEntity = GetValidUserEntity();
+                UserRepository repo = _baseRepository.GetNewRepository(context);
+                UserEntity userEntity = _baseRepository.GetNewValidEntity();
                 await context.Users.AddAsync(userEntity);
                 await context.SaveChangesAsync();
 
@@ -23,11 +29,7 @@ namespace UsersAdmin.Test.Unit.Repository.User
 
                 Assert.NotNull(selectedEntities);
                 Assert.Single(selectedEntities);
-                Assert.Equal(userEntity.Id, selectedEntities.First().Id);
-                Assert.Equal(userEntity.Name, selectedEntities.First().Name);
-                Assert.Equal(userEntity.Description, selectedEntities.First().Description);
-                Assert.Equal(userEntity.Email, selectedEntities.First().Email);
-                Assert.Equal(userEntity.Pass, selectedEntities.First().Pass);
+                _baseRepository.AssertAllProperties(userEntity, selectedEntities.First());
             }
         }
 
@@ -38,7 +40,7 @@ namespace UsersAdmin.Test.Unit.Repository.User
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
-                UserRepository repo = new UserRepository(context);
+                UserRepository repo = _baseRepository.GetNewRepository(context);
 
                 var entityWithUsers = repo.SelectItemsByNameFilter(id);
 

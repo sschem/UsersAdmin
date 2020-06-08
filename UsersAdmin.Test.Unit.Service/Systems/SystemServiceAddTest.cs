@@ -12,72 +12,66 @@ namespace UsersAdmin.Test.Unit.Service.Systems
 {
     using static Testing;
 
-    public class SystemServiceAddTest
+    public class SystemServiceAddTest : SystemServiceTest
     {
         [Fact]
         public async void SystemService_AddAsync_ValidateOk()
         {
-            SystemDto dto = GetValidSystemDto();
-            var repositoryMock = new Mock<ISystemRepository>();
-            var unitOfWorkMock = GetMockedUnitOfWorkForSystem(repositoryMock.Object);
-            SystemService service = new SystemService(unitOfWorkMock.Object, MapperInstance);
-            
-            await service.AddAsync(dto);
+            SystemDto dto = this.GetNewValidDto();
+            var repositoryMock = this.GetNewEmptyMockedRepository();
+            var serviceMock = this.GetNewService(repositoryMock.Object);
 
-            unitOfWorkMock.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
-            unitOfWorkMock.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Once);
+            await serviceMock.Service.AddAsync(dto);
+
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Once);
         }
 
         [Fact]
         public async void SystemService_AddAsync_Null_ThrowException()
         {
             SystemDto dto = null;
-            var repositoryMock = new Mock<ISystemRepository>();
-            var unitOfWorkMock = GetMockedUnitOfWorkForSystem(repositoryMock.Object);
-            SystemService service = new SystemService(unitOfWorkMock.Object, MapperInstance);
+            var repositoryMock = this.GetNewEmptyMockedRepository();
+            var serviceMock = this.GetNewService(repositoryMock.Object);
 
-            Func<Task> act = async () => await service.AddAsync(dto);
+            Func<Task> act = async () => await serviceMock.Service.AddAsync(dto);
 
             await act.Should().ThrowAsync<NullReferenceException>();
-            unitOfWorkMock.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Never);
-            unitOfWorkMock.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Never);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Never);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Never);
         }
 
         [Fact]
         public async void SystemService_AddAsync_IdNull_ThrowException()
         {
-            SystemDto dto = GetValidSystemDto();
-            dto.Id = null;
-            var repositoryMock = new Mock<ISystemRepository>();
+            SystemDto dto = this.GetNewValidDto();
+            this.ChangeIdToNull(ref dto);
+            var repositoryMock = this.GetNewEmptyMockedRepository();
             repositoryMock.Setup(r => r.InsertAsync(It.Is<SystemEntity>(e => e.Id == null)))
                 .Throws<ArgumentNullException>();
+            var serviceMock = this.GetNewService(repositoryMock.Object);
 
-            var unitOfWorkMock = GetMockedUnitOfWorkForSystem(repositoryMock.Object);
-            SystemService service = new SystemService(unitOfWorkMock.Object, MapperInstance);
-
-            Func<Task> act = async () => await service.AddAsync(dto);
+            Func<Task> act = async () => await serviceMock.Service.AddAsync(dto);
 
             await act.Should().ThrowAsync<ArgumentNullException>();
-            unitOfWorkMock.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
-            unitOfWorkMock.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Once);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Once);
         }
 
         [Fact]
         public async void SystemService_AddAsync_Existent_ThrowWarningException()
         {
-            SystemDto dto = GetValidSystemDto();
-            var repositoryMock = new Mock<ISystemRepository>();
+            SystemDto dto = this.GetNewValidDto();
+            var repositoryMock = this.GetNewEmptyMockedRepository();
             repositoryMock.Setup(r => r.SelectByIdAsync(It.IsAny<object[]>()))
-                .Returns(new ValueTask<SystemEntity>(new SystemEntity() { Id = dto.Id}));
+                .Returns(new ValueTask<SystemEntity>(new SystemEntity() { Id = dto.Id }));
+            var serviceMock = this.GetNewService(repositoryMock.Object);
 
-            var unitOfWorkMock = GetMockedUnitOfWorkForSystem(repositoryMock.Object);
-            SystemService service = new SystemService(unitOfWorkMock.Object, MapperInstance);
-            
-            Func<Task> act = async () => await service.AddAsync(dto);
+            Func<Task> act = async () => await serviceMock.Service.AddAsync(dto);
 
-            await act.Should().ThrowAsync<WarningException>().WithMessage(service.EntityAlreadyExists);
-            unitOfWorkMock.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
-            unitOfWorkMock.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Never);
+            await act.Should().ThrowAsync<WarningException>().WithMessage(serviceMock.Service.EntityAlreadyExists);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.InsertAsync(It.IsAny<SystemEntity>()), Times.Never);
         }
     }
 }

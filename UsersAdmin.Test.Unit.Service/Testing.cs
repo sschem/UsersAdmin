@@ -23,13 +23,6 @@ namespace UsersAdmin.Test.Unit.Service
             .CreateMapper();
         }
 
-        public static Mock<IUnitOfWork> GetMockedUnitOfWorkForSystem(ISystemRepository repo)
-        {
-            var unitOfWorkMock = new Mock<IUnitOfWork>();            
-            unitOfWorkMock.Setup(u => u.Systems).Returns(repo);
-            return unitOfWorkMock;
-        }
-
         public static SystemDto GetValidSystemDto() => new SystemDto()
         {
             Id = "SystemValidId",
