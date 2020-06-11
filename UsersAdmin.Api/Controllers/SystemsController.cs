@@ -23,7 +23,7 @@ namespace UsersAdmin.Api.Controllers
 
         [HttpGet]
         [TypeFilter(typeof(StringLogResultFilter))]
-        public async Task<ActionResult<Answer<IEnumerable<SystemDto>>>> GetAllSystems()
+        public async Task<ActionResult<Answer<IEnumerable<SystemItemDto>>>> GetAllSystems()
         {
             var systems = await _service.GetAllItemsAsync();
             return Ok(new Answer<IEnumerable<SystemItemDto>>(systems));

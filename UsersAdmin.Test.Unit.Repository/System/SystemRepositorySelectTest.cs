@@ -17,7 +17,7 @@ namespace UsersAdmin.Test.Unit.Repository.System
         }
 
         [Fact]
-        public async void SystemRepository_SelectIncludingUsers_ObtainOneWithUser()
+        public async void SelectIncludingUsers_ObtainOneWithUser()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -46,7 +46,7 @@ namespace UsersAdmin.Test.Unit.Repository.System
         }
 
         [Fact]
-        public async void SystemRepository_SelectIncludingUsers_SystemWithoutUsers_then_UserListIsEmpty()
+        public async void SelectIncludingUsers_SystemWithoutUsers_then_UserListIsEmpty()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -67,7 +67,7 @@ namespace UsersAdmin.Test.Unit.Repository.System
         [Theory]
         [InlineData("x")]
         [InlineData(null)]
-        public void SystemRepository_SelectIncludingUsers_NonExistent_returnNull(string id)
+        public void SelectIncludingUsers_NonExistent_returnNull(string id)
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {

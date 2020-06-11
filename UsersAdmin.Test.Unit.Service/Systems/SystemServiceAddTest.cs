@@ -15,7 +15,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
     public class SystemServiceAddTest : SystemServiceTest
     {
         [Fact]
-        public async void SystemService_AddAsync_ValidateOk()
+        public async void AddAsync_ValidateOk()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -28,7 +28,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_AddAsync_Null_ThrowException()
+        public async void AddAsync_Null_ThrowException()
         {
             SystemDto dto = null;
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -42,7 +42,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_AddAsync_IdNull_ThrowException()
+        public async void AddAsync_IdNull_ThrowException()
         {
             SystemDto dto = this.GetNewValidDto();
             this.ChangeIdToNull(ref dto);
@@ -59,7 +59,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_AddAsync_Existent_ThrowWarningException()
+        public async void AddAsync_Existent_ThrowWarningException()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();

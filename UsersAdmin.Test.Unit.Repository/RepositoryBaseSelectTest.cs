@@ -23,7 +23,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositorySelectById_ObtainOne()
+        public async void SelectById_ObtainOne()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -40,7 +40,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositorySelectById_Null_IsNull()
+        public async void SelectById_Null_IsNull()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -53,7 +53,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositorySelectAll_IsEmpty()
+        public async void SelectAll_IsEmpty()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -66,7 +66,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositorySelectAll_ObtainOne()
+        public async void SelectAll_ObtainOne()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -86,7 +86,7 @@ namespace UsersAdmin.Test.Unit.Repository
         [Theory]
         [InlineData(true, 1)]
         [InlineData(false, 0)]
-        public async void RepositorySelectByFilter_ValidateBasicPredicates(bool expressionFilterResult, int expectedCant)
+        public async void SelectByFilter_ValidateBasicPredicates(bool expressionFilterResult, int expectedCant)
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {

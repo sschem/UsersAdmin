@@ -15,7 +15,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
     public class SystemServiceRemoveTest : SystemServiceTest
     {
         [Fact]
-        public async void SystemService_Remove_ValidateOk()
+        public async void Remove_ValidateOk()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();

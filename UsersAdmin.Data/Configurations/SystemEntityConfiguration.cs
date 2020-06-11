@@ -9,7 +9,7 @@ namespace UsersAdmin.Data.Configurations
         public void Configure(EntityTypeBuilder<SystemEntity> builder)
         {
             builder.HasKey(e => e.Id)
-                 .HasName("PRIMARY");
+                 .HasName("fwim_system_pk");
 
             builder.ToTable("fwim_system");
 

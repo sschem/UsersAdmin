@@ -16,7 +16,7 @@ namespace UsersAdmin.Test.Unit.Repository.User
         }
 
         [Fact]
-        public async void UserRepository_SelectItemsByNameFilter_ValidateOk()
+        public async void SelectItemsByNameFilter_ValidateOk()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -36,7 +36,7 @@ namespace UsersAdmin.Test.Unit.Repository.User
         [Theory]
         [InlineData("x")]
         [InlineData(null)]
-        public void UserRepository_SelectItemsByNameFilter_NonExistent_returnEmptyList(string id)
+        public void SelectItemsByNameFilter_NonExistent_returnEmptyList(string id)
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {

@@ -9,7 +9,7 @@ namespace UsersAdmin.Data.Configurations
         public void Configure(EntityTypeBuilder<UserEntity> builder)
         {
             builder.HasKey(e => e.Id)
-                     .HasName("PRIMARY");
+                     .HasName("fwim_user_pk");
 
             builder.ToTable("fwim_user");
 
@@ -19,36 +19,26 @@ namespace UsersAdmin.Data.Configurations
 
             builder.Property(e => e.Id)
                 .HasColumnName("userid")
-                .HasColumnType("varchar(50)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(50)");
 
             builder.Property(e => e.Description)
                 .HasColumnName("userdescri")
-                .HasColumnType("varchar(100)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(100)");
 
             builder.Property(e => e.Email)
                 .IsRequired()
                 .HasColumnName("useremail")
-                .HasColumnType("varchar(100)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(100)");
 
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasColumnName("username")
-                .HasColumnType("varchar(100)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(100)");
 
             builder.Property(e => e.Pass)
                 .IsRequired()
                 .HasColumnName("userpass")
-                .HasColumnType("varchar(50)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(50)");
         }
     }
 }

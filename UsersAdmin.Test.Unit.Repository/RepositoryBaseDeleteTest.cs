@@ -21,7 +21,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void Repository_Delete_ValidateOk()
+        public async void Delete_ValidateOk()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -38,7 +38,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void Repository_Delete_NonExistent_Id_ThrowException()
+        public async void Delete_NonExistent_Id_ThrowException()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -57,7 +57,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void Repository_Delete_Null_Entity_ThrowException()
+        public async void Delete_Null_Entity_ThrowException()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -75,7 +75,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void Repository_Delete_Null_Id_ThrowException()
+        public async void Delete_Null_Id_ThrowException()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {

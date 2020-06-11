@@ -12,7 +12,7 @@ namespace UsersAdmin.Data.Configurations
         public void Configure(EntityTypeBuilder<UserSystemEntity> builder)
         {
             builder.HasKey(e => new { e.UserId, e.SystemId })
-                    .HasName("PRIMARY");
+                    .HasName("fwim_usrsys_pk");
 
             builder.ToTable("fwim_usrsys");
 
@@ -24,15 +24,11 @@ namespace UsersAdmin.Data.Configurations
 
             builder.Property(e => e.UserId)
                 .HasColumnName("userid")
-                .HasColumnType("varchar(50)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(50)");
 
             builder.Property(e => e.SystemId)
                 .HasColumnName("systemid")
-                .HasColumnType("varchar(50)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnType("varchar(50)");
 
             builder.HasOne(d => d.System)
                 .WithMany(p => p.UserSystemLst)

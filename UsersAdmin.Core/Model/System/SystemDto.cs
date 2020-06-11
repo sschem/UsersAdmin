@@ -9,6 +9,11 @@ namespace UsersAdmin.Core.Model.System
 {
     public class SystemDto : DtoBase, IMapFrom<SystemEntity>
     {
+        public SystemDto()
+        {
+            this.Users = new List<UserItemDto>();
+        }
+
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

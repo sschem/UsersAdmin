@@ -22,7 +22,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositoryUpdate_ValidateOk()
+        public async void Update_ValidateOk()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -40,7 +40,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositoryUpdate_NonExistent_Id_ThrowException()
+        public async void Update_NonExistent_Id_ThrowException()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -59,7 +59,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositoryUpdate_Null_Entity_ThrowException()
+        public async void Update_Null_Entity_ThrowException()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {
@@ -77,7 +77,7 @@ namespace UsersAdmin.Test.Unit.Repository
         }
 
         [Fact]
-        public async void RepositoryUpdate_Null_Id_ThrowException()
+        public async void Update_Null_Id_ThrowException()
         {
             using (var context = new AuthDbContext(CreateNewContextOptions()))
             {

@@ -3,14 +3,10 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using UsersAdmin.Core.Exceptions;
 using UsersAdmin.Core.Model.System;
 using UsersAdmin.Core.Model.User;
-using UsersAdmin.Core.Repositories;
-using UsersAdmin.Services;
 using Xunit;
 
 namespace UsersAdmin.Test.Unit.Service.Systems
@@ -20,7 +16,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
     public class SystemServiceGetTest : SystemServiceTest
     {
         [Fact]
-        public async void SystemService_GetByIdAsync_GetOne()
+        public async void GetByIdAsync_GetOne()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -32,13 +28,13 @@ namespace UsersAdmin.Test.Unit.Service.Systems
 
             serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
             obtainedDto.Should().NotBeNull();
-            obtainedDto.Id.Should().Equals(dto.Id);
-            obtainedDto.Name.Should().Equals(dto.Name);
-            obtainedDto.Description.Should().Equals(dto.Description);
+            obtainedDto.Id.Should().Be(dto.Id);
+            obtainedDto.Name.Should().Be(dto.Name);
+            obtainedDto.Description.Should().Be(dto.Description);
         }
 
         [Fact]
-        public async void SystemService_GetByIdAsync_NotFound_ThrowException()
+        public async void GetByIdAsync_NotFound_ThrowException()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -53,7 +49,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_GetByIdAsync_Null_ThrowException()
+        public async void GetByIdAsync_Null_ThrowException()
         {
             var repositoryMock = this.GetNewEmptyMockedRepository();
             repositoryMock.Setup(r => r.SelectByIdAsync(It.Is<object[]>(o => o == null)))
@@ -67,7 +63,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_GetAllAsync_GetOne()
+        public async void GetAllAsync_GetOne()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -86,7 +82,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_GetAllAsync_GetEmpty()
+        public async void GetAllAsync_GetEmpty()
         {
             var repositoryMock = this.GetNewEmptyMockedRepository();
             repositoryMock.Setup(r => r.SelectAllAsync())
@@ -104,7 +100,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_GetAllItemsAsync_GetOne()
+        public async void GetAllItemsAsync_GetOne()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -123,7 +119,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public async void SystemService_GetAllItemsAsync_GetEmpty()
+        public async void GetAllItemsAsync_GetEmpty()
         {
             var repositoryMock = this.GetNewEmptyMockedRepository();
             repositoryMock.Setup(r => r.SelectAllAsync())
@@ -141,7 +137,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         }
 
         [Fact]
-        public void SystemService_GetWithUsers_GetOne()
+        public void GetWithUsers_GetOne()
         {
             SystemDto systemDto = this.GetNewValidDto();
             UserDto userDto = GetValidUserDto();
@@ -166,8 +162,8 @@ namespace UsersAdmin.Test.Unit.Service.Systems
             obtainedDto.Should().NotBeNull();
             obtainedDto.Users.Should().NotBeNull();
             obtainedDto.Users.Should().HaveCount(1);
-            obtainedDto.Id.Should().Equals(systemDto.Id);
-            obtainedDto.Users.First().UserId.Should().Equals(userDto.Id);
+            obtainedDto.Id.Should().Be(systemDto.Id);
+            obtainedDto.Users.First().UserId.Should().Be(userDto.Id);
 
         }
 
@@ -175,7 +171,7 @@ namespace UsersAdmin.Test.Unit.Service.Systems
         [InlineData(null)]
         [InlineData("")]
         [InlineData("x")]
-        public void SystemService_GetWithUsers_GetNull(string systemId)
+        public void GetWithUsers_GetNull(string systemId)
         {
             var repositoryMock = this.GetNewEmptyMockedRepository();
             repositoryMock.Setup(r => r.SelectIncludingUsers(It.IsAny<string>()))
