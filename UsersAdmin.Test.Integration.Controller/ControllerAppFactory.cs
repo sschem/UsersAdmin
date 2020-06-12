@@ -16,16 +16,27 @@ namespace UsersAdmin.Test.Integration.Controller
         private Checkpoint _checkpoint;
         private IConfiguration _configuration;
         
-        private readonly bool _useLocalSqlDb;
+        private bool _useLocalSqlDb;
         private readonly string _localConnectionStringName = "AuthDbLocalSql";
 
         private IDbAdapter RespawnDbAdapter => _useLocalSqlDb ? DbAdapter.SqlServer : DbAdapter.MySql;
 
         public IServiceScopeFactory ScopeFactory { get; private set; }
 
-        public ControllerAppFactory(bool useLocalSqlDb)
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            _useLocalSqlDb = useLocalSqlDb;
+            LoadLocalConfigurationFile(builder);            
+
+            builder.ConfigureServices(services =>
+            {
+                _useLocalSqlDb = _configuration.GetValue<bool>("UseSqlLocalDb");
+
+                if (_useLocalSqlDb) 
+                    UseTestDb(services);
+
+                ConfigureDb(services);
+                this.ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
+            });
         }
 
         public async Task Reset()
@@ -37,18 +48,6 @@ namespace UsersAdmin.Test.Integration.Controller
                 dbConnection.Open();
                 await _checkpoint.Reset(dbConnection);
             }
-        }
-
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            LoadLocalConfigurationFile(builder);
-            builder.ConfigureServices(services =>
-            {
-                if (_useLocalSqlDb) 
-                    UseTestDb(services);
-                ConfigureDb(services);
-                this.ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
-            });
         }
 
         private void LoadLocalConfigurationFile(IWebHostBuilder builder)

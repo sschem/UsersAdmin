@@ -27,7 +27,9 @@ namespace UsersAdmin.Test.Integration.Controller
             _client = Factory.CreateClient();
         }
 
-        public virtual async Task InitializeAsync()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             if (_initialized)
                 return;
@@ -42,7 +44,6 @@ namespace UsersAdmin.Test.Integration.Controller
                 _initialized = true;
             }
         }
-        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         protected void AddDto<TEntity, TDto>(TDto dto)
             where TEntity : class
