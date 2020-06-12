@@ -19,6 +19,8 @@ namespace UsersAdmin.Test.Integration.Controller
         private readonly bool _useLocalSqlDb;
         private readonly string _localConnectionStringName = "AuthDbLocalSql";
 
+        private IDbAdapter RespawnDbAdapter => _useLocalSqlDb ? DbAdapter.SqlServer : DbAdapter.MySql;
+
         public IServiceScopeFactory ScopeFactory { get; private set; }
 
         public ControllerAppFactory(bool useLocalSqlDb)
@@ -70,7 +72,7 @@ namespace UsersAdmin.Test.Integration.Controller
                 dbContext.Database.EnsureCreated();
             }
 
-            _checkpoint = new Checkpoint();
+            _checkpoint = new Checkpoint() { DbAdapter = RespawnDbAdapter };
         }
 
         private void UseTestDb(IServiceCollection services)
