@@ -1,13 +1,9 @@
-﻿using AutoMapper;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Moq;
 using UsersAdmin.Core.Model.System;
 using UsersAdmin.Core.Repositories;
 using UsersAdmin.Services;
 
-namespace UsersAdmin.Test.Unit.Service.Systems
+namespace UsersAdmin.Test.Unit.Service.System
 {
     using static Testing;
     public class SystemServiceTest

@@ -10,7 +10,7 @@ namespace UsersAdmin.Test.Integration.Controller
 
         static InitialSetup()
         {
-            Factory = new ControllerAppFactory();
+            Factory = new ControllerAppFactory(true);
 
             MapperInstance = new MapperConfiguration(cfg =>
             {

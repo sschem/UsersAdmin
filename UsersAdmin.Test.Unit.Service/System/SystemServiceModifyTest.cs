@@ -1,21 +1,14 @@
-﻿using FluentAssertions;
-using Moq;
-using System;
+﻿using Moq;
 using System.Threading.Tasks;
-using UsersAdmin.Core.Exceptions;
 using UsersAdmin.Core.Model.System;
-using UsersAdmin.Core.Repositories;
-using UsersAdmin.Services;
 using Xunit;
 
-namespace UsersAdmin.Test.Unit.Service.Systems
+namespace UsersAdmin.Test.Unit.Service.System
 {
-    using static Testing;
-
-    public class SystemServiceRemoveTest : SystemServiceTest
+    public class SystemServiceModifyTest : SystemServiceTest
     {
         [Fact]
-        public async void Remove_ValidateOk()
+        public async void Modify_ValidateOk()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -23,10 +16,11 @@ namespace UsersAdmin.Test.Unit.Service.Systems
                 .Returns(new ValueTask<SystemEntity>(new SystemEntity() { Id = dto.Id }));
             var serviceMock = this.GetNewService(repositoryMock.Object);
 
-            await serviceMock.Service.Remove(new object[] { dto.Id });
+            await serviceMock.Service.Modify(dto, new object[0]);
 
             serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
-            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.Delete(It.IsAny<SystemEntity>()), Times.Once);
+            //Entity is updated modifying properties; because first obtain entity from repo.
+            //serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.Update(It.IsAny<SystemEntity>()), Times.Once);
         }
     }
 }

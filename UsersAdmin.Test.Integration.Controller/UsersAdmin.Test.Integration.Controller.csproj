@@ -16,6 +16,7 @@
   <ItemGroup>
     <Compile Include="System\SystemControllerDeleteTest.cs" />
     <Compile Include="System\SystemControllerGetTest.cs" />
+    <Compile Include="System\SystemControllerPutTest.cs" />
     <Compile Include="System\SystemControllerPostTest.cs" />
   </ItemGroup>
 
@@ -35,10 +36,6 @@
     <ProjectReference Include="..\UsersAdmin.Core\UsersAdmin.Core.csproj" />
     <ProjectReference Include="..\UsersAdmin.Data\UsersAdmin.Data.csproj" />
     <ProjectReference Include="..\UsersAdmin.Services\UsersAdmin.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="User\" />
   </ItemGroup>
 
 </Project>

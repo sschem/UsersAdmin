@@ -15,13 +15,26 @@ namespace UsersAdmin.Test.Integration.Controller
     {
         private Checkpoint _checkpoint;
         private IConfiguration _configuration;
-        private readonly string _connectionStringName = "AuthDbTest";
+        
+        private readonly bool _useLocalSqlDb;
+        private readonly string _localConnectionStringName = "AuthDbLocalSql";
 
         public IServiceScopeFactory ScopeFactory { get; private set; }
 
+        public ControllerAppFactory(bool useLocalSqlDb)
+        {
+            _useLocalSqlDb = useLocalSqlDb;
+        }
+
         public async Task Reset()
         {
-            await _checkpoint.Reset(_configuration.GetConnectionString(_connectionStringName));
+            using (var scope = ScopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
+                var dbConnection = dbContext.Database.GetDbConnection();
+                dbConnection.Open();
+                await _checkpoint.Reset(dbConnection);
+            }
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -29,7 +42,8 @@ namespace UsersAdmin.Test.Integration.Controller
             LoadLocalConfigurationFile(builder);
             builder.ConfigureServices(services =>
             {
-                UseTestDb(services);
+                if (_useLocalSqlDb) 
+                    UseTestDb(services);
                 ConfigureDb(services);
                 this.ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
             });
@@ -69,7 +83,7 @@ namespace UsersAdmin.Test.Integration.Controller
             
             services.AddDbContext<AuthDbContext>((options, context) =>
             {
-                context.UseSqlServer(_configuration.GetConnectionString(_connectionStringName));
+                context.UseSqlServer(_configuration.GetConnectionString(_localConnectionStringName));
             });
         }        
     }

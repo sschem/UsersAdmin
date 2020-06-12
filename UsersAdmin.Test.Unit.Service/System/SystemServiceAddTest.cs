@@ -4,14 +4,10 @@ using System;
 using System.Threading.Tasks;
 using UsersAdmin.Core.Exceptions;
 using UsersAdmin.Core.Model.System;
-using UsersAdmin.Core.Repositories;
-using UsersAdmin.Services;
 using Xunit;
 
-namespace UsersAdmin.Test.Unit.Service.Systems
+namespace UsersAdmin.Test.Unit.Service.System
 {
-    using static Testing;
-
     public class SystemServiceAddTest : SystemServiceTest
     {
         [Fact]

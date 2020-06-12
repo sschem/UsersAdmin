@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using UsersAdmin.Core.Model.System;
 using Xunit;
 
-namespace UsersAdmin.Test.Unit.Service.Systems
+namespace UsersAdmin.Test.Unit.Service.System
 {
-    public class SystemServiceModifyTest : SystemServiceTest
+    public class SystemServiceRemoveTest : SystemServiceTest
     {
         [Fact]
-        public async void Modify_ValidateOk()
+        public async void Remove_ValidateOk()
         {
             SystemDto dto = this.GetNewValidDto();
             var repositoryMock = this.GetNewEmptyMockedRepository();
@@ -16,11 +16,10 @@ namespace UsersAdmin.Test.Unit.Service.Systems
                 .Returns(new ValueTask<SystemEntity>(new SystemEntity() { Id = dto.Id }));
             var serviceMock = this.GetNewService(repositoryMock.Object);
 
-            await serviceMock.Service.Modify(dto, new object[0]);
+            await serviceMock.Service.Remove(new object[] { dto.Id });
 
             serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.SelectByIdAsync(It.IsAny<object[]>()), Times.Once);
-            //Entity is updated modifying properties; because first obtain entity from repo.
-            //serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.Update(It.IsAny<SystemEntity>()), Times.Once);
+            serviceMock.MockUnitOfWork.Verify(mock => mock.Systems.Delete(It.IsAny<SystemEntity>()), Times.Once);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace UsersAdmin.Test.Integration.Controller.System
     using static InitialSetup;
     public class SystemControllerGetTest : ControllerBaseTest
     {
-        private SystemDto _systemDto;
-        private UserDto _userDto;
+        private readonly SystemDto _systemDto;
+        private readonly UserDto _userDto;
 
         public SystemControllerGetTest()
         {
@@ -42,10 +42,11 @@ namespace UsersAdmin.Test.Integration.Controller.System
 
             var response = await _client.GetAsync("/api/Systems");
             var responseString = await response.Content.ReadAsStringAsync();
-            var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<SystemItemDto>>>(responseString);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            
+            var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<SystemItemDto>>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
             answer.IsWarning.Should().Be(false);
             answer.IsError.Should().Be(false);
@@ -62,10 +63,11 @@ namespace UsersAdmin.Test.Integration.Controller.System
 
             var response = await _client.GetAsync("/api/Systems/" + _systemDto.Id);
             var responseString = await response.Content.ReadAsStringAsync();
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            
+            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
             answer.IsWarning.Should().Be(false);
             answer.IsError.Should().Be(false);
@@ -81,10 +83,11 @@ namespace UsersAdmin.Test.Integration.Controller.System
         {
             var response = await _client.GetAsync("/api/Systems/NOT_EXISTS");
             var responseString = await response.Content.ReadAsStringAsync();
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            
+            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
             answer.IsWarning.Should().Be(true);
             answer.IsError.Should().Be(false);
@@ -107,10 +110,11 @@ namespace UsersAdmin.Test.Integration.Controller.System
 
             var response = await _client.GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
             var responseString = await response.Content.ReadAsStringAsync();
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            
+            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
             answer.IsWarning.Should().Be(false);
             answer.IsError.Should().Be(false);

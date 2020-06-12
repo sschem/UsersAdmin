@@ -9,7 +9,7 @@ using UsersAdmin.Core.Model.System;
 using UsersAdmin.Core.Model.User;
 using Xunit;
 
-namespace UsersAdmin.Test.Unit.Service.Systems
+namespace UsersAdmin.Test.Unit.Service.System
 {
     using static Testing;
 
