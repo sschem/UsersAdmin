@@ -14,10 +14,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="ControllerBaseTest.cs" />
+    <Compile Remove="Testing.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="System\SystemControllerDeleteTest.cs" />
     <Compile Include="System\SystemControllerGetTest.cs" />
-    <Compile Include="System\SystemControllerPutTest.cs" />
     <Compile Include="System\SystemControllerPostTest.cs" />
+    <Compile Include="System\SystemControllerPutTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

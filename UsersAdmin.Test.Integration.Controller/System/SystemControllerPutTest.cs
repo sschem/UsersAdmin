@@ -7,12 +7,16 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.System
 {
-    public class SystemControllerPutTest : ControllerBaseTest
+    [Collection("Controller collection")]
+    public class SystemControllerPutTest
     {
         private readonly SystemDto _systemDto;
+        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerPutTest()
+        public SystemControllerPutTest(WebAppFactoryFixture fixture)
         {
+            _fixture = fixture;
+
             _systemDto = new SystemDto()
             {
                 Id = "Test.PutSystem.Id",
@@ -24,17 +28,17 @@ namespace UsersAdmin.Test.Integration.Controller.System
         [Fact]
         public async void PutSystem_PutOne()
         {
-            this.AddDto<SystemEntity, SystemDto>(_systemDto);
+            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
             _systemDto.Name = "UdatedName";
             _systemDto.Description = "UdatedDescription";
-            var msgContent = this.CreateMessageContent(_systemDto);
+            var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _client.PutAsync("/api/Systems/" + _systemDto.Id, msgContent);
+            var response = await _fixture.CreateClient().PutAsync("/api/Systems/" + _systemDto.Id, msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
-            var obtainedEntiy = await this.FindAsync<SystemEntity, SystemDto>(_systemDto);
+            var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
 
             var answer = JsonConvert.DeserializeObject<Answer>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
@@ -50,13 +54,13 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void PutSystem_PutNonExistent()
         {
             _systemDto.Id = "PutSystem_PutNonExistent";
-            var msgContent = this.CreateMessageContent(_systemDto);
+            var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _client.PutAsync("/api/Systems/" + _systemDto.Id, msgContent);
+            var response = await _fixture.CreateClient().PutAsync("/api/Systems/" + _systemDto.Id, msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer>(responseString);
             answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);

@@ -9,14 +9,18 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.System
 {
-    using static InitialSetup;
-    public class SystemControllerGetTest : ControllerBaseTest
+    
+    [Collection("Controller collection")]
+    public class SystemControllerGetTest
     {
         private readonly SystemDto _systemDto;
         private readonly UserDto _userDto;
+        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerGetTest()
+        public SystemControllerGetTest(WebAppFactoryFixture fixture)
         {
+            _fixture = fixture;
+
             _systemDto = new SystemDto()
             {
                 Id = null,
@@ -38,13 +42,13 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void GetAllSystems_ObtainAtLeastOne()
         {
             _systemDto.Id = "Test.GetAllSystem.OK";
-            this.AddDto<SystemEntity, SystemDto>(_systemDto);
+            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
-            var response = await _client.GetAsync("/api/Systems");
+            var response = await _fixture.CreateClient().GetAsync("/api/Systems");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<SystemItemDto>>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
@@ -59,13 +63,13 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void GetById_ObtainOne()
         {
             _systemDto.Id = "Test.GetById.One";
-            this.AddDto<SystemEntity, SystemDto>(_systemDto);
+            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
-            var response = await _client.GetAsync("/api/Systems/" + _systemDto.Id);
+            var response = await _fixture.CreateClient().GetAsync("/api/Systems/" + _systemDto.Id);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
@@ -81,11 +85,11 @@ namespace UsersAdmin.Test.Integration.Controller.System
         [Fact]
         public async void GetById_ObtainNull()
         {
-            var response = await _client.GetAsync("/api/Systems/NOT_EXISTS");
+            var response = await _fixture.CreateClient().GetAsync("/api/Systems/NOT_EXISTS");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
@@ -102,17 +106,17 @@ namespace UsersAdmin.Test.Integration.Controller.System
             UserSystemEntity userSystemEntity = new UserSystemEntity
             {
                 SystemId = _systemDto.Id,
-                System = MapperInstance.Map<SystemEntity>(_systemDto),
+                System = _fixture.MapperInstance.Map<SystemEntity>(_systemDto),
                 UserId = _userDto.Id,
-                User = MapperInstance.Map<UserEntity>(_userDto)
+                User = _fixture.MapperInstance.Map<UserEntity>(_userDto)
             };
-            this.AddEntity(userSystemEntity);
+            _fixture.AddEntity(userSystemEntity);
 
-            var response = await _client.GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
+            var response = await _fixture.CreateClient().GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);

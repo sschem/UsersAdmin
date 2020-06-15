@@ -7,12 +7,16 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.System
 {
-    public class SystemControllerPostTest : ControllerBaseTest
+    [Collection("Controller collection")]
+    public class SystemControllerPostTest
     {
         private readonly SystemDto _systemDto;
+        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerPostTest()
+        public SystemControllerPostTest(WebAppFactoryFixture fixture)
         {
+            _fixture = fixture;
+
             _systemDto = new SystemDto()
             {
                 Id = "Test.PostSystem.Id",
@@ -24,14 +28,15 @@ namespace UsersAdmin.Test.Integration.Controller.System
         [Fact]
         public async void PostSystem_PostOne()
         {
-            var msgContent = this.CreateMessageContent(_systemDto);
+            var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _client.PostAsync("/api/Systems/", msgContent);
+            var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
-            var obtainedEntiy = await this.FindAsync<SystemEntity, SystemDto>(_systemDto);
+
+            var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
 
             response.StatusCode.Should().Be(HttpStatusCode.Created);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
 
             var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
@@ -45,14 +50,14 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void PostSystem_PostExistent()
         {
             _systemDto.Id = "PostSystem_PostExistent";
-            this.AddDto<SystemEntity, SystemDto>(_systemDto);
-            var msgContent = this.CreateMessageContent(_systemDto);
+            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _client.PostAsync("/api/Systems/", msgContent);
+            var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
 
             var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
@@ -71,14 +76,14 @@ namespace UsersAdmin.Test.Integration.Controller.System
         {
             _systemDto.Id = id;
             _systemDto.Name = name;
-            var msgContent = this.CreateMessageContent(_systemDto);
+            var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _client.PostAsync("/api/Systems/", msgContent);
+            var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
-            var obtainedEntiy = await this.FindAsync<SystemEntity, SystemDto>(_systemDto);
+            var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
 
             var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
             answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);

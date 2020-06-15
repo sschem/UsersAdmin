@@ -7,12 +7,16 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.System
 {
-    public class SystemControllerDeleteTest : ControllerBaseTest
+    [Collection("Controller collection")]
+    public class SystemControllerDeleteTest
     {
         private readonly SystemDto _systemDto;
+        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerDeleteTest()
+        public SystemControllerDeleteTest(WebAppFactoryFixture fixture)
         {
+            _fixture = fixture;
+
             _systemDto = new SystemDto()
             {
                 Id = null,
@@ -25,14 +29,14 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void DeleteSystem_DeleteOne()
         {
             _systemDto.Id = "Test.DeleteSystem.Ok";
-            this.AddDto<SystemEntity, SystemDto>(_systemDto);
+            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
-            var response = await _client.DeleteAsync("/api/Systems/" + _systemDto.Id);
+            var response = await _fixture.CreateClient().DeleteAsync("/api/Systems/" + _systemDto.Id);
             var responseString = await response.Content.ReadAsStringAsync();
-            var obtainedEntiy = await this.FindAsync<SystemEntity, SystemDto>(_systemDto);
-
+            var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
+            
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
@@ -46,15 +50,15 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void DeleteSystem_NotDelete()
         {
             _systemDto.Id = "Test.DeleteSystem.No";
-            this.AddDto<SystemEntity, SystemDto>(_systemDto);
+            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
-            var response = await _client.DeleteAsync("/api/Systems/NotExistent");
+            var response = await _fixture.CreateClient().DeleteAsync("/api/Systems/NotExistent");
             var responseString = await response.Content.ReadAsStringAsync();
 
-            var obtainedEntiy = await this.FindAsync<SystemEntity, SystemDto>(_systemDto);
+            var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer>(responseString);
             answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);

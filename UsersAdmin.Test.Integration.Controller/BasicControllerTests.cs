@@ -8,16 +8,22 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller
 {
-    public class BasicControllerTests : ControllerBaseTest
+    [Collection("Controller collection")]
+    public class BasicControllerTests
     {
-        public BasicControllerTests() { }
+        private readonly WebAppFactoryFixture _fixture;
+
+        public BasicControllerTests(WebAppFactoryFixture fixture) 
+        {
+            _fixture = fixture;
+        }
 
         [Theory]
         [InlineData("/api/Systems")]
         [InlineData("/api/Users")]
-        public async void GetAllEndpoints_AreAnswersOfIEnumerables_ValidateOk(string url)
+        public async void GetAllEndpoints_AreAnswersOfIEnumerables(string url)
         {
-            var response = await _client.GetAsync(url);
+            var response = await _fixture.CreateClient().GetAsync(url);
             var responseString = await response.Content.ReadAsStringAsync();
             var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<Object>>>(responseString);
 

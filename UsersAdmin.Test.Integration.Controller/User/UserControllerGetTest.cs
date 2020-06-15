@@ -8,12 +8,16 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.User
 {
-    public class UserControllerGetTest : ControllerBaseTest
+    [Collection("Controller collection")]
+    public class UserControllerGetTest
     {
         private readonly UserDto _userDto;
+        private readonly WebAppFactoryFixture _fixture;
 
-        public UserControllerGetTest()
+        public UserControllerGetTest(WebAppFactoryFixture fixture)
         {
+            _fixture = fixture;
+
             _userDto = new UserDto()
             {
                 Id = null,
@@ -28,13 +32,13 @@ namespace UsersAdmin.Test.Integration.Controller.User
         public async void GetAllUsers_ObtainAtLeastOne()
         {
             _userDto.Id = "Test.GetAllUser.OK";
-            this.AddDto<UserEntity, UserDto>(_userDto);
+            _fixture.AddDto<UserEntity, UserDto>(_userDto);
 
-            var response = await _client.GetAsync("/api/Users");
+            var response = await _fixture.CreateClient().GetAsync("/api/Users");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
             
             var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<UserItemDto>>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
@@ -49,13 +53,13 @@ namespace UsersAdmin.Test.Integration.Controller.User
         public async void GetByNameFilter_ObtainOneAtLeast()
         {
             _userDto.Id = "Test.GetByNameFilter";
-            this.AddDto<UserEntity, UserDto>(_userDto);
+            _fixture.AddDto<UserEntity, UserDto>(_userDto);
 
-            var response = await _client.GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
+            var response = await _fixture.CreateClient().GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(CONTENT_TYPE);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
 
             var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<UserItemDto>>>(responseString);
             answer.Code.Should().Be(Answer.OK_CODE);
