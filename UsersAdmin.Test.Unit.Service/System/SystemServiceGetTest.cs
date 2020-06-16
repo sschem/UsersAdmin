@@ -77,6 +77,8 @@ namespace UsersAdmin.Test.Unit.Service.System
             var dtos = await serviceMock.Service.GetAllAsync();
 
             serviceMock.MockUnitOfWork.VerifyAll();
+            serviceMock.MockCache.Verify(mock => mock.GetAsync<IEnumerable<SystemEntity>>(It.IsAny<string>()), Times.Once);
+            serviceMock.MockCache.Verify(mock => mock.AddAsync(It.IsAny<string>(), It.IsAny<IEnumerable<SystemEntity>>()), Times.Once);
             dtos.Should().NotBeNull();
             dtos.Should().HaveCount(1);
         }
@@ -95,6 +97,8 @@ namespace UsersAdmin.Test.Unit.Service.System
             var dtos = await serviceMock.Service.GetAllAsync();
 
             serviceMock.MockUnitOfWork.VerifyAll();
+            serviceMock.MockCache.Verify(mock => mock.GetAsync<IEnumerable<SystemEntity>>(It.IsAny<string>()), Times.Once);
+            serviceMock.MockCache.Verify(mock => mock.AddAsync(It.IsAny<string>(), It.IsAny<IEnumerable<SystemEntity>>()), Times.Once);
             dtos.Should().NotBeNull();
             dtos.Should().BeEmpty();
         }
@@ -114,6 +118,8 @@ namespace UsersAdmin.Test.Unit.Service.System
             var dtos = await serviceMock.Service.GetAllItemsAsync();
 
             serviceMock.MockUnitOfWork.VerifyAll();
+            serviceMock.MockCache.Verify(mock => mock.GetAsync<IEnumerable<SystemEntity>>(It.IsAny<string>()), Times.Once);
+            serviceMock.MockCache.Verify(mock => mock.AddAsync(It.IsAny<string>(), It.IsAny<IEnumerable<SystemEntity>>()), Times.Once);
             dtos.Should().NotBeNull();
             dtos.Should().HaveCount(1);
         }
@@ -132,6 +138,8 @@ namespace UsersAdmin.Test.Unit.Service.System
             var dtos = await serviceMock.Service.GetAllItemsAsync();
 
             serviceMock.MockUnitOfWork.VerifyAll();
+            serviceMock.MockCache.Verify(mock => mock.GetAsync<IEnumerable<SystemEntity>>(It.IsAny<string>()), Times.Once);
+            serviceMock.MockCache.Verify(mock => mock.AddAsync(It.IsAny<string>(), It.IsAny<IEnumerable<SystemEntity>>()), Times.Once);
             dtos.Should().NotBeNull();
             dtos.Should().BeEmpty();
         }

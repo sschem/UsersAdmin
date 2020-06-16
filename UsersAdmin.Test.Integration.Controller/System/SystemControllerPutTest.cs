@@ -28,7 +28,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         [Fact]
         public async void PutSystem_PutOne()
         {
-            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
             _systemDto.Name = "UdatedName";
             _systemDto.Description = "UdatedDescription";
             var msgContent = _fixture.CreateMessageContent(_systemDto);

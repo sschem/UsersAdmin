@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using UsersAdmin.Api.Answers;
 using UsersAdmin.Core.Model.User;
+using UsersAdmin.Services;
 using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.User
@@ -32,7 +33,8 @@ namespace UsersAdmin.Test.Integration.Controller.User
         public async void GetAllUsers_ObtainAtLeastOne()
         {
             _userDto.Id = "Test.GetAllUser.OK";
-            _fixture.AddDto<UserEntity, UserDto>(_userDto);
+            await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
+            await _fixture.AddDto<UserEntity, UserDto>(_userDto);
 
             var response = await _fixture.CreateClient().GetAsync("/api/Users");
             var responseString = await response.Content.ReadAsStringAsync();
@@ -53,7 +55,8 @@ namespace UsersAdmin.Test.Integration.Controller.User
         public async void GetByNameFilter_ObtainOneAtLeast()
         {
             _userDto.Id = "Test.GetByNameFilter";
-            _fixture.AddDto<UserEntity, UserDto>(_userDto);
+            await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
+            await _fixture.AddDto<UserEntity, UserDto>(_userDto);
 
             var response = await _fixture.CreateClient().GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
             var responseString = await response.Content.ReadAsStringAsync();

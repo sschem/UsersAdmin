@@ -1,6 +1,9 @@
 ﻿using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
+using UsersAdmin.Core.Services;
 using UsersAdmin.Services;
 
 namespace UsersAdmin.Test.Unit.Service.User
@@ -27,10 +30,16 @@ namespace UsersAdmin.Test.Unit.Service.User
             dto.Id = null;
         }
 
-        protected (UserService Service, Mock<IUnitOfWork> MockUnitOfWork) GetNewService(IUserRepository repository)
+        protected (UserService Service, Mock<IUnitOfWork> MockUnitOfWork, Mock<IAppCache> MockCache) 
+            GetNewService(IUserRepository repository)
         {
             var mockUnitOfWork = this.GetNewMockedUnitOfWork(repository);
-            return (new UserService(mockUnitOfWork.Object, MapperInstance), mockUnitOfWork);
+            
+            var mockCache = new Mock<IAppCache>();
+            mockCache.Setup(c => c.GetAsync<IEnumerable<UserEntity>>(It.IsAny<string>()))
+                .Returns(Task.FromResult<IEnumerable<UserEntity>>(null));
+            
+            return (new UserService(mockUnitOfWork.Object, MapperInstance, mockCache.Object), mockUnitOfWork, mockCache);
         }
             
     }

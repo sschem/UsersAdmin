@@ -5,6 +5,7 @@ using System.Net;
 using UsersAdmin.Api.Answers;
 using UsersAdmin.Core.Model.System;
 using UsersAdmin.Core.Model.User;
+using UsersAdmin.Services;
 using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.System
@@ -42,7 +43,8 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void GetAllSystems_ObtainAtLeastOne()
         {
             _systemDto.Id = "Test.GetAllSystem.OK";
-            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            await _fixture.ClearCache(SystemService.GET_ALL_CACHE_KEY);
+            await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
             var response = await _fixture.CreateClient().GetAsync("/api/Systems");
             var responseString = await response.Content.ReadAsStringAsync();
@@ -63,7 +65,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void GetById_ObtainOne()
         {
             _systemDto.Id = "Test.GetById.One";
-            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
             var response = await _fixture.CreateClient().GetAsync("/api/Systems/" + _systemDto.Id);
             var responseString = await response.Content.ReadAsStringAsync();
@@ -110,7 +112,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
                 UserId = _userDto.Id,
                 User = _fixture.MapperInstance.Map<UserEntity>(_userDto)
             };
-            _fixture.AddEntity(userSystemEntity);
+            await _fixture.AddEntity(userSystemEntity);
 
             var response = await _fixture.CreateClient().GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
             var responseString = await response.Content.ReadAsStringAsync();

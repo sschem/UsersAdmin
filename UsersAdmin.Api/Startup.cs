@@ -49,6 +49,7 @@ namespace UsersAdmin.Api
 
             services.AddAutoMapper(this.CoreAssembly);
 
+            services.AddTransient<IAppCache, AppCache>();
             services.AddTransient<ISystemRepository, SystemRepository>();
             services.AddTransient<ISystemService, SystemService>();
             services.AddTransient<IUserRepository, UserRepository>();
@@ -66,6 +67,11 @@ namespace UsersAdmin.Api
                 options.SuppressModelStateInvalidFilter = true
             )
             .AddNewtonsoftJson();
+
+            services.AddMemoryCache();
+            services.AddStackExchangeRedisCache(options =>
+                options.Configuration = "localhost:6379"
+            );
 
             services.AddSwaggerGen(c =>
             {

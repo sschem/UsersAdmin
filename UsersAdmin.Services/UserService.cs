@@ -1,8 +1,6 @@
 using AutoMapper;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
+using System.Linq;
 using System.Threading.Tasks;
 using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
@@ -14,7 +12,8 @@ namespace UsersAdmin.Services
     {
         protected override IUserRepository Repository => _unitOfWork.Users;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IAppCache cache) 
+            : base(unitOfWork, mapper, cache) { }
 
         protected override void MapPropertiesForUpdate(UserEntity outdatedEntity, UserEntity newEntity)
         {
@@ -26,15 +25,19 @@ namespace UsersAdmin.Services
 
         public async Task<IEnumerable<UserItemDto>> GetAllItemsAsync()
         {
-            var entities = await Repository.SelectAllAsync();
+            var entities = await this.GetAllEntitiesAsync();
             var UserItems = _mapper.Map<IEnumerable<UserItemDto>>(entities);
             return UserItems;
         }
 
-        public IEnumerable<UserItemDto> GetItemsByNameFilter(string nameFilter)
+        public async Task<IEnumerable<UserItemDto>> GetItemsByNameFilter(string nameFilter)
         {
-            var entities = Repository.SelectItemsByNameFilter(nameFilter);
-            var UserItems = _mapper.Map<IEnumerable<UserItemDto>>(entities);
+            var entities = await this.GetAllEntitiesAsync();
+            
+            var filterEntities = entities.Where(u => !string.IsNullOrEmpty(nameFilter) &&
+                (u.Name.ToUpper().Contains(nameFilter.ToUpper())));
+
+            var UserItems = _mapper.Map<IEnumerable<UserItemDto>>(filterEntities);
             return UserItems;
         }
     }

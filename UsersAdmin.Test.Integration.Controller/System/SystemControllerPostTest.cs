@@ -50,7 +50,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void PostSystem_PostExistent()
         {
             _systemDto.Id = "PostSystem_PostExistent";
-            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
             var msgContent = _fixture.CreateMessageContent(_systemDto);
 
             var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);

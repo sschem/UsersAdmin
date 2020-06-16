@@ -7,6 +7,6 @@ namespace UsersAdmin.Core.Services
     public interface IUserService : IService<UserDto, UserEntity>
     {
         Task<IEnumerable<UserItemDto>> GetAllItemsAsync();
-        IEnumerable<UserItemDto> GetItemsByNameFilter(string nameFilter);
+        Task<IEnumerable<UserItemDto>> GetItemsByNameFilter(string nameFilter);
     }
 }

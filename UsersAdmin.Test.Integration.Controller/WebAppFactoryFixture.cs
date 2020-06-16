@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -27,7 +29,7 @@ namespace UsersAdmin.Test.Integration.Controller
         private IConfiguration _configuration;
 
         private bool _useLocalSqlDb;
-        
+
         private readonly string _localConnectionStringName = "AuthDbLocalSql";
         public readonly string CONTENT_TYPE = "application/json; charset=utf-8";
 
@@ -35,11 +37,11 @@ namespace UsersAdmin.Test.Integration.Controller
 
         public IServiceScopeFactory ScopeFactory { get; private set; }
 
-        public WebAppFactoryFixture() : base() 
+        public WebAppFactoryFixture() : base()
         {
             //To execute ConfigureWebHost method at the very beginning
             this.CreateClient();
-            
+
             MapperInstance = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<MappingProfile>();
@@ -118,24 +120,25 @@ namespace UsersAdmin.Test.Integration.Controller
             });
         }
 
-        public void AddDto<TEntity, TDto>(TDto dto)
+        public async Task AddDto<TEntity, TDto>(TDto dto)
             where TEntity : class
         {
-            this.AddEntity(MapperInstance.Map<TEntity>(dto));
+            var entity = MapperInstance.Map<TEntity>(dto);
+            await this.AddEntity(entity);
         }
 
-        public void AddEntity<TEntity>(TEntity entity)
+        public async Task AddEntity<TEntity>(TEntity entity)
             where TEntity : class
         {
             using (var scope = ScopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
+                await dbContext.AddAsync(entity);
+                await dbContext.SaveChangesAsync();
             }
         }
 
-        public async Task<TEntity> FindAsync<TEntity, TDto>(TDto dto)
+        public async ValueTask<TEntity> FindAsync<TEntity, TDto>(TDto dto)
             where TEntity : class, IIds
         {
             TEntity entity = MapperInstance.Map<TEntity>(dto);
@@ -151,6 +154,15 @@ namespace UsersAdmin.Test.Integration.Controller
             var jsonDto = JsonConvert.SerializeObject(dto);
             var msgContent = new StringContent(jsonDto, this.ENCODING, this.MEDIA_TYPE);
             return msgContent;
+        }
+
+        public Task ClearCache(string cacheKey)
+        {
+            using (var scope = ScopeFactory.CreateScope())
+            {
+                var cache = scope.ServiceProvider.GetService<IDistributedCache>();
+                return cache.RemoveAsync(cacheKey);
+            }
         }
     }
 }

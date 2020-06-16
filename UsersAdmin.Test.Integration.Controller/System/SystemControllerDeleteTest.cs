@@ -29,7 +29,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void DeleteSystem_DeleteOne()
         {
             _systemDto.Id = "Test.DeleteSystem.Ok";
-            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
             var response = await _fixture.CreateClient().DeleteAsync("/api/Systems/" + _systemDto.Id);
             var responseString = await response.Content.ReadAsStringAsync();
@@ -50,7 +50,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         public async void DeleteSystem_NotDelete()
         {
             _systemDto.Id = "Test.DeleteSystem.No";
-            _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
+            await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
             var response = await _fixture.CreateClient().DeleteAsync("/api/Systems/NotExistent");
             var responseString = await response.Content.ReadAsStringAsync();

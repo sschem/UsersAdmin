@@ -12,7 +12,8 @@ namespace UsersAdmin.Services
     {
         protected override ISystemRepository Repository => _unitOfWork.Systems;
 
-       public SystemService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
+       public SystemService(IUnitOfWork unitOfWork, IMapper mapper, IAppCache cache)
+            : base(unitOfWork, mapper, cache) { }
 
         protected override void MapPropertiesForUpdate(SystemEntity outdatedEntity, SystemEntity newEntity)
         {
@@ -29,7 +30,7 @@ namespace UsersAdmin.Services
 
         public async Task<IEnumerable<SystemItemDto>> GetAllItemsAsync()
         {
-            var entities = await this.Repository.SelectAllAsync();
+            var entities = await this.GetAllEntitiesAsync();
             var systemItems = _mapper.Map< IEnumerable<SystemItemDto>>(entities);
             return systemItems;
         }

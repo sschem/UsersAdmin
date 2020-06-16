@@ -30,9 +30,9 @@ namespace UsersAdmin.Api.Controllers
 
         [HttpGet("filterByName")]
         [TypeFilter(typeof(StringLogResultFilter))]
-        public ActionResult<Answer<IEnumerable<UserItemDto>>> GetByNameFilter(string name)
+        public async Task<ActionResult<Answer<IEnumerable<UserItemDto>>>> GetByNameFilter(string name)
         {
-            var users = _service.GetItemsByNameFilter(name);
+            var users = await _service.GetItemsByNameFilter(name);
             return Ok(new Answer<IEnumerable<UserItemDto>>(users));
         }
     }
