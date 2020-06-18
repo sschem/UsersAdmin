@@ -8,5 +8,7 @@ namespace UsersAdmin.Core.Services
     {
         Task<IEnumerable<UserItemDto>> GetAllItemsAsync();
         Task<IEnumerable<UserItemDto>> GetItemsByNameFilter(string nameFilter);
+
+        Task<UserLoggedDto> GetValidated(UserLoginDto user);
     }
 }

@@ -8,9 +8,11 @@ using AutoMapper;
 using UsersAdmin.Api.Answers;
 using UsersAdmin.Api.Filters;
 using UsersAdmin.Core.Model.System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UsersAdmin.Api.Controllers
 {
+    [Authorize]
     public class SystemsController : BaseController
     {
         private readonly ISystemService _service;
@@ -21,6 +23,7 @@ namespace UsersAdmin.Api.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [TypeFilter(typeof(StringLogResultFilter))]
         public async Task<ActionResult<Answer<IEnumerable<SystemItemDto>>>> GetAllSystems()

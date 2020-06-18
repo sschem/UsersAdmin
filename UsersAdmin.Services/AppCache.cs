@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using UsersAdmin.Core.Services;
@@ -19,7 +20,9 @@ namespace UsersAdmin.Services
         {
             var serializedObject = JsonConvert.SerializeObject(t);
             var encodedObject = Encoding.UTF8.GetBytes(serializedObject);
-            await _cache.SetAsync(key, encodedObject);
+            DistributedCacheEntryOptions options = new DistributedCacheEntryOptions();
+            options.SetSlidingExpiration(new TimeSpan(0, 1, 0));
+            await _cache.SetAsync(key, encodedObject, options);
         }
 
         public async Task<T> GetAsync<T>(string key) where T: class

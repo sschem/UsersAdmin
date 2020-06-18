@@ -1,0 +1,14 @@
+﻿INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('TestSystem','Sistema de Test','Sistema de prueba para testings.');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('BO.Site','BackOffices','Sistema integral de soporte.');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('AuLab','AuditorLabo','Sistema de Auditoria para Laboratorio.');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('AdMani.Site','Administracion de Manifiestos','Sistema de Manejo de Manifiestos para Entidades');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('FrontOffices.Site','Sistema General Externo','Sistema de Administracion para Clientes.');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('AGV','AgenteVirtual','Sistema de Consultas para el Agente Virtual');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('Optimus','Optimus','Optimus - Sistema general de administraciÃ³n Imed');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('LaboWs40','WS de Laboratorio','Nuevos Sericios de Laboratorio.');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('Optimus.WinUI','Optimus','Sistema integral de gestion.');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('SwitchImed','Switch de mensajeria Imed','Servicio general de Switching');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('SitioWebImed','Sitio de Imed','Sitio de usuarios general');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('FarManager','FarManager','Sistema integral de administracion');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('FarmaSwitch','Switch de mensajeria FarmaCenter','Servicio general de Switching para FarmaPami');
+INSERT INTO fwim_system (systemid,systemname,systemdescri) VALUES ('Mandados.Site','Mandados de Supermercado','Admnistracion de Listas para realizar compras.');

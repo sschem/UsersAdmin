@@ -18,6 +18,10 @@ using System.Linq;
 using FluentValidation;
 using System.Reflection;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using UsersAdmin.Api.Auth;
 
 namespace UsersAdmin.Api
 {
@@ -41,6 +45,7 @@ namespace UsersAdmin.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<SystemInfoConfig>(Configuration.GetSection("SystemInfo"));
+            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
             services.AddDbContext<AuthDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("AuthDb"), x => x.ServerVersion("8.0.19-mysql"))
@@ -73,6 +78,30 @@ namespace UsersAdmin.Api
                 options.Configuration = "localhost:6379"
             );
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JwtConfig:Key"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
+
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy(Policies.ADMIN_ROLE, Policies.AdminPolicy());
+                config.AddPolicy(Policies.USER_ROLE, Policies.UserPolicy());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -97,11 +126,14 @@ namespace UsersAdmin.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-
             app.UseCors();
 
             app.UseAddHeaderInfo();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

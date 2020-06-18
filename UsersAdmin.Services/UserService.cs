@@ -40,5 +40,16 @@ namespace UsersAdmin.Services
             var UserItems = _mapper.Map<IEnumerable<UserItemDto>>(filterEntities);
             return UserItems;
         }
+
+        public async Task<UserLoggedDto> GetValidated(UserLoginDto user)
+        {
+            var entities = await this.GetAllEntitiesAsync();
+
+            var validatedUser = entities.Where(u => user != null && u.Id == user.Id && u.Pass == user.Pass)
+                .FirstOrDefault();
+
+            var UserItems = _mapper.Map<UserLoggedDto>(validatedUser);
+            return UserItems;
+        }
     }
 }

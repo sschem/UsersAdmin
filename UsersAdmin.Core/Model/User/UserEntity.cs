@@ -17,6 +17,7 @@ namespace UsersAdmin.Core.Model.User
         public string Name { get; set; }
         public string Email { get; set; }
         public string Description { get; set; }
+        public UserRole Role { get; set; }
         public List<UserSystemEntity> UserSystemLst { get; set; }
 
         public object[] GetIds => new object[] { Id };

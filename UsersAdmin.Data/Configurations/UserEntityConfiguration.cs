@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using UsersAdmin.Core.Model.User;
 
 namespace UsersAdmin.Data.Configurations
@@ -39,6 +40,12 @@ namespace UsersAdmin.Data.Configurations
                 .IsRequired()
                 .HasColumnName("userpass")
                 .HasColumnType("varchar(50)");
+
+            builder.Property(e => e.Role)
+                .IsRequired()
+                .HasColumnName("userrole")
+                .HasColumnType("varchar(10)")
+                .HasConversion(r => r.ToString(), r => (UserRole)Enum.Parse(typeof(UserRole), r));
         }
     }
 }
