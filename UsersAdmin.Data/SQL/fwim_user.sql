@@ -48,3 +48,6 @@ INSERT INTO fwim_user (userid,userpass,username,useremail,userdescri) VALUES ('A
 INSERT INTO fwim_user (userid,userpass,username,useremail,userdescri) VALUES ('ACHAGA','ACHAGA','Andres Chagas','Andres.Chagas.ext@atos.net.ar','Operador de Auditoria');
 INSERT INTO fwim_user (userid,userpass,username,useremail,userdescri) VALUES ('AACUNA','123456','Alejandro Acuna','-','Recepcion');
 INSERT INTO fwim_user (userid,userpass,username,useremail,userdescri) VALUES ('70000136005','9999','FARMALINK','',null);
+
+alter table fwim_user add column userrole varchar(10) not null default "User";
+

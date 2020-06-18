@@ -54,7 +54,8 @@ namespace UsersAdmin.Api.Controllers
             
             var claims = new Claim[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Name),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim("name", user.Name),
                 new Claim("role", user.Role)
             };
 
