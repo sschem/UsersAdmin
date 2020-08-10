@@ -75,7 +75,7 @@ namespace UsersAdmin.Api
 
             services.AddMemoryCache();
             services.AddStackExchangeRedisCache(options =>
-                options.Configuration = "localhost:6379"
+                options.Configuration = Configuration.GetConnectionString("RedisDb")
             );
 
             services.AddAuthentication(options =>
