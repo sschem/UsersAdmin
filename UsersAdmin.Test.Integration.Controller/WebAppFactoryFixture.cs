@@ -8,13 +8,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Respawn;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using UsersAdmin.Api.Config;
 using UsersAdmin.Core.Model.Mapping;
+using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
+using UsersAdmin.Core.Security;
 using UsersAdmin.Data;
 
 namespace UsersAdmin.Test.Integration.Controller
@@ -24,12 +29,12 @@ namespace UsersAdmin.Test.Integration.Controller
         protected readonly string MEDIA_TYPE = "application/json";
         protected readonly Encoding ENCODING = Encoding.UTF8;
         public readonly IMapper MapperInstance;
-
+        
         private Checkpoint _checkpoint;
         private IConfiguration _configuration;
 
         private bool _useLocalSqlDb;
-
+        
         private readonly string _localConnectionStringName = "AuthDbLocalSql";
         public readonly string CONTENT_TYPE = "application/json; charset=utf-8";
 
@@ -37,6 +42,9 @@ namespace UsersAdmin.Test.Integration.Controller
 
         public IServiceScopeFactory ScopeFactory { get; private set; }
 
+        private ITokenProvider _tokenProvider;
+        public UserLoggedDto UserAdmin { get; private set; }
+        
         public WebAppFactoryFixture() : base()
         {
             //To execute ConfigureWebHost method at the very beginning
@@ -62,24 +70,9 @@ namespace UsersAdmin.Test.Integration.Controller
 
                 ConfigureDb(services);
                 this.ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
+
+                ConfigureAuth(services);
             });
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            this.Reset();
-            base.Dispose(disposing);
-        }
-
-        public void Reset()
-        {
-            using (var scope = ScopeFactory.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
-                var dbConnection = dbContext.Database.GetDbConnection();
-                dbConnection.Open();
-                _checkpoint.Reset(dbConnection).Wait();
-            }
         }
 
         private void LoadLocalConfigurationFile(IWebHostBuilder builder)
@@ -118,6 +111,15 @@ namespace UsersAdmin.Test.Integration.Controller
             {
                 context.UseSqlServer(_configuration.GetConnectionString(_localConnectionStringName));
             });
+        }
+
+        private void ConfigureAuth(IServiceCollection services)
+        {
+            //Used to give the config value.
+            //var jwtConfig = _configuration.GetSection("JwtConfig").Get<JwtConfig>();
+            _tokenProvider = services.BuildServiceProvider().GetService<ITokenProvider>();
+            this.UserAdmin = new UserLoggedDto() { Id = "ADMIN", Name = "Administrator", Role = "Admin" };
+            this.UserAdmin.Token = _tokenProvider.BuildToken(this.UserAdmin);
         }
 
         public async Task AddDto<TEntity, TDto>(TDto dto)
@@ -163,6 +165,30 @@ namespace UsersAdmin.Test.Integration.Controller
                 var cache = scope.ServiceProvider.GetService<IDistributedCache>();
                 return cache.RemoveAsync(cacheKey);
             }
+        }
+
+        public void Reset()
+        {
+            using (var scope = ScopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
+                var dbConnection = dbContext.Database.GetDbConnection();
+                dbConnection.Open();
+                _checkpoint.Reset(dbConnection).Wait();
+            }
+        }
+
+        new public HttpClient CreateClient()
+        {
+            var client = base.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.UserAdmin.Token);
+            return client;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            this.Reset();
+            base.Dispose(disposing);
         }
     }
 }
