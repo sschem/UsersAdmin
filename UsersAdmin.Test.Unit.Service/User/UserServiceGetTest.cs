@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UsersAdmin.Core.Exceptions;
 using UsersAdmin.Core.Model.User;
-using UsersAdmin.Core.Services;
 using Xunit;
 
 namespace UsersAdmin.Test.Unit.Service.User
@@ -131,6 +132,64 @@ namespace UsersAdmin.Test.Unit.Service.User
             serviceMock.MockCache.Verify(mock => mock.AddAsync(It.IsAny<string>(), It.IsAny<IEnumerable<UserEntity>>()), Times.Once);
             dtos.Should().NotBeNull();
             dtos.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async void GetValidated_GetOne()
+        {
+            UserDto dto = this.GetNewValidDto();
+            var repositoryMock = this.GetNewEmptyMockedRepository();
+            repositoryMock.Setup(r => r.SelectAllAsync())
+                .Returns(Task.FromResult(
+                    (IEnumerable<UserEntity>)new List<UserEntity> { MapperInstance.Map<UserEntity>(dto) })
+                )
+                .Verifiable();
+            var serviceMock = this.GetNewService(repositoryMock.Object);
+
+            var obtainedDto = await serviceMock.Service.GetValidated(this.GetNewValidLoginDto());
+
+            serviceMock.MockUnitOfWork.VerifyAll();
+            obtainedDto.Should().NotBeNull();
+            obtainedDto.Id.Should().Be(dto.Id);
+            obtainedDto.Name.Should().Be(dto.Name);
+            obtainedDto.Role.Should().NotBeNullOrEmpty();
+            obtainedDto.Token.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async void GetValidated_NotFound_ThrowException()
+        {
+            UserDto dto = this.GetNewValidDto();
+            var repositoryMock = this.GetNewEmptyMockedRepository();
+            repositoryMock.Setup(r => r.SelectAllAsync())
+                .Returns(Task.FromResult(
+                    (IEnumerable<UserEntity>)new List<UserEntity>())
+                )
+                .Verifiable();
+            var serviceMock = this.GetNewService(repositoryMock.Object);
+
+            Func<Task<UserLoggedDto>> getValidatedFunc = async () => await serviceMock.Service.GetValidated(this.GetNewValidLoginDto());
+
+            await getValidatedFunc.Should().ThrowAsync<WarningException>().WithMessage(serviceMock.Service.UserIncorrect);
+            serviceMock.MockUnitOfWork.VerifyAll();
+        }
+
+        [Fact]
+        public async void GetValidated_Null_ThrowException()
+        {
+            UserDto dto = this.GetNewValidDto();
+            var repositoryMock = this.GetNewEmptyMockedRepository();
+            repositoryMock.Setup(r => r.SelectAllAsync())
+                .Returns(Task.FromResult(
+                    (IEnumerable<UserEntity>)new List<UserEntity>())
+                )
+                .Verifiable();
+            var serviceMock = this.GetNewService(repositoryMock.Object);
+
+            Func<Task<UserLoggedDto>> getValidatedFunc = async () => await serviceMock.Service.GetValidated(null);
+
+            await getValidatedFunc.Should().ThrowAsync<WarningException>().WithMessage(serviceMock.Service.UserIncorrect);
+            serviceMock.MockUnitOfWork.VerifyAll();
         }
     }
 }

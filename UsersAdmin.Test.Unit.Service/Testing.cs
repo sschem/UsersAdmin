@@ -38,5 +38,11 @@ namespace UsersAdmin.Test.Unit.Service
             Email = "validuser@mail.com",
             Pass = "validclearpass"
         };
+
+        public static UserLoginDto GetValidUserLoginDto() => new UserLoginDto()
+        {
+            Id = GetValidUserDto().Id,
+            Pass = GetValidUserDto().Pass
+        };
     }
 }

@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UsersAdmin.Api.Auth;
+using UsersAdmin.Core.Security;
 
 namespace UsersAdmin.Api
 {
@@ -55,6 +56,7 @@ namespace UsersAdmin.Api
             services.AddAutoMapper(this.CoreAssembly);
 
             services.AddTransient<IAppCache, AppCache>();
+            services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<ISystemRepository, SystemRepository>();
             services.AddTransient<ISystemService, SystemService>();
             services.AddTransient<IUserRepository, UserRepository>();
