@@ -21,29 +21,24 @@ using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
 using UsersAdmin.Core.Security;
 using UsersAdmin.Data;
+using UsersAdmin.Test.Integration.Controller.Factory.DataBase;
 
-namespace UsersAdmin.Test.Integration.Controller
+namespace UsersAdmin.Test.Integration.Controller.Factory
 {
     public class WebAppFactoryFixture : WebApplicationFactory<UsersAdmin.Api.Startup>
     {
         protected readonly string MEDIA_TYPE = "application/json";
-        protected readonly Encoding ENCODING = Encoding.UTF8;
-        public readonly IMapper MapperInstance;
-        
-        private Checkpoint _checkpoint;
-        private IConfiguration _configuration;
-
-        private bool _useLocalSqlDb;
-        
+        protected readonly Encoding ENCODING = Encoding.UTF8;                
         private readonly string _localConnectionStringName = "AuthDbLocalSql";
         public readonly string CONTENT_TYPE = "application/json; charset=utf-8";
-
-        private IDbAdapter RespawnDbAdapter => _useLocalSqlDb ? DbAdapter.SqlServer : DbAdapter.MySql;
-
+        
         public IServiceScopeFactory ScopeFactory { get; private set; }
-
-        private ITokenProvider _tokenProvider;
         public UserLoggedDto UserAdmin { get; private set; }
+        public readonly IMapper MapperInstance;
+
+        private ITokenProvider _tokenProvider;        
+        private IConfiguration _configuration;
+        private IDbTestContext _dbContext;
         
         public WebAppFactoryFixture() : base()
         {
@@ -60,17 +55,10 @@ namespace UsersAdmin.Test.Integration.Controller
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             LoadLocalConfigurationFile(builder);
-
             builder.ConfigureServices(services =>
             {
-                _useLocalSqlDb = _configuration.GetValue<bool>("UseSqlLocalDb");
-
-                if (_useLocalSqlDb)
-                    UseTestDb(services);
-
-                ConfigureDb(services);
+                this.SetUpDbContext(services);
                 this.ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
-
                 ConfigureAuth(services);
             });
         }
@@ -86,31 +74,18 @@ namespace UsersAdmin.Test.Integration.Controller
             });
         }
 
-        private void ConfigureDb(IServiceCollection services)
+        private void SetUpDbContext(IServiceCollection services)
         {
-            var serviceProvider = services.BuildServiceProvider();
-            using (var scope = serviceProvider.CreateScope())
+            var useLocalSqlDb = _configuration.GetValue<bool>("UseSqlLocalDb");
+            if (useLocalSqlDb)
             {
-                var scopedServices = scope.ServiceProvider;
-                var dbContext = scopedServices.GetRequiredService<AuthDbContext>();
-                dbContext.Database.EnsureCreated();
+                var connString = _configuration.GetConnectionString(_localConnectionStringName);
+                _dbContext = new LocalDbTestContext(services, connString);
             }
-
-            _checkpoint = new Checkpoint() { DbAdapter = RespawnDbAdapter };
-        }
-
-        private void UseTestDb(IServiceCollection services)
-        {
-            var dbServiceDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<AuthDbContext>));
-            if (dbServiceDescriptor != null)
+            else
             {
-                services.Remove(dbServiceDescriptor);
+                _dbContext = new DefaultDbTestContext(services);
             }
-
-            services.AddDbContext<AuthDbContext>((options, context) =>
-            {
-                context.UseSqlServer(_configuration.GetConnectionString(_localConnectionStringName));
-            });
         }
 
         private void ConfigureAuth(IServiceCollection services)
@@ -166,18 +141,7 @@ namespace UsersAdmin.Test.Integration.Controller
                 return cache.RemoveAsync(cacheKey);
             }
         }
-
-        public void Reset()
-        {
-            using (var scope = ScopeFactory.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
-                var dbConnection = dbContext.Database.GetDbConnection();
-                dbConnection.Open();
-                _checkpoint.Reset(dbConnection).Wait();
-            }
-        }
-
+        
         new public HttpClient CreateClient()
         {
             var client = base.CreateClient();
@@ -187,7 +151,7 @@ namespace UsersAdmin.Test.Integration.Controller
 
         protected override void Dispose(bool disposing)
         {
-            this.Reset();
+            _dbContext.Reset(this.ScopeFactory);
             base.Dispose(disposing);
         }
     }

@@ -25,14 +25,7 @@ namespace UsersAdmin.Api.Controllers
         public async Task<ActionResult<Answer<UserLoggedDto>>> Login(UserLoginDto user)
         {
             var validatedUser = await _service.GetValidated(user);
-            if (validatedUser == null)
-            {
-                return Ok(new WarningAnswer("Usuario no valido!"));
-            }
-            else
-            {
-                return Ok(new Answer<UserLoggedDto>(validatedUser));
-            }
+            return Ok(new Answer<UserLoggedDto>(validatedUser));
         }
     }
 }

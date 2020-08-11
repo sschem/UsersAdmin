@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using UsersAdmin.Api.Answers;
+using UsersAdmin.Test.Integration.Controller.Factory;
 using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller

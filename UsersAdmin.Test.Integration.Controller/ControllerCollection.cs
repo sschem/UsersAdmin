@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using UsersAdmin.Test.Integration.Controller.Factory;
+using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller
 {
