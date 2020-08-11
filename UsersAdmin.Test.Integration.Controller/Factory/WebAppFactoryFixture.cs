@@ -1,26 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Respawn;
-using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using UsersAdmin.Api.Config;
-using UsersAdmin.Core.Model.Mapping;
 using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
 using UsersAdmin.Core.Security;
-using UsersAdmin.Data;
 using UsersAdmin.Test.Integration.Controller.Factory.DataBase;
 
 namespace UsersAdmin.Test.Integration.Controller.Factory
@@ -28,28 +20,24 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
     public class WebAppFactoryFixture : WebApplicationFactory<UsersAdmin.Api.Startup>
     {
         protected readonly string MEDIA_TYPE = "application/json";
-        protected readonly Encoding ENCODING = Encoding.UTF8;                
+        protected readonly Encoding ENCODING = Encoding.UTF8;
         private readonly string _localConnectionStringName = "AuthDbLocalSql";
         public readonly string CONTENT_TYPE = "application/json; charset=utf-8";
-        
+
         public IServiceScopeFactory ScopeFactory { get; private set; }
         public UserLoggedDto UserAdmin { get; private set; }
-        public readonly IMapper MapperInstance;
 
-        private ITokenProvider _tokenProvider;        
+        public IMapper MapperInstance => _repoHelper.MapperInstance;
+
+        private ITokenProvider _tokenProvider;
         private IConfiguration _configuration;
         private IDbTestContext _dbContext;
-        
+        private RepositoryTestHelper _repoHelper;
+
         public WebAppFactoryFixture() : base()
         {
             //To execute ConfigureWebHost method at the very beginning
             this.CreateClient();
-
-            MapperInstance = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            })
-            .CreateMapper();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -59,7 +47,8 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
             {
                 this.SetUpDbContext(services);
                 this.ScopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
-                ConfigureAuth(services);
+                _repoHelper = new RepositoryTestHelper(this.ScopeFactory);
+                SetupSecurity(services);
             });
         }
 
@@ -88,42 +77,13 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
             }
         }
 
-        private void ConfigureAuth(IServiceCollection services)
+        private void SetupSecurity(IServiceCollection services)
         {
             //Used to give the config value.
             //var jwtConfig = _configuration.GetSection("JwtConfig").Get<JwtConfig>();
             _tokenProvider = services.BuildServiceProvider().GetService<ITokenProvider>();
             this.UserAdmin = new UserLoggedDto() { Id = "ADMIN", Name = "Administrator", Role = "Admin" };
             this.UserAdmin.Token = _tokenProvider.BuildToken(this.UserAdmin);
-        }
-
-        public async Task AddDto<TEntity, TDto>(TDto dto)
-            where TEntity : class
-        {
-            var entity = MapperInstance.Map<TEntity>(dto);
-            await this.AddEntity(entity);
-        }
-
-        public async Task AddEntity<TEntity>(TEntity entity)
-            where TEntity : class
-        {
-            using (var scope = ScopeFactory.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
-                await dbContext.AddAsync(entity);
-                await dbContext.SaveChangesAsync();
-            }
-        }
-
-        public async ValueTask<TEntity> FindAsync<TEntity, TDto>(TDto dto)
-            where TEntity : class, IIds
-        {
-            TEntity entity = MapperInstance.Map<TEntity>(dto);
-            using (var scope = ScopeFactory.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();
-                return await dbContext.FindAsync<TEntity>(entity.GetIds);
-            }
         }
 
         public StringContent CreateMessageContent(object dto)
@@ -141,13 +101,22 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
                 return cache.RemoveAsync(cacheKey);
             }
         }
-        
+
         new public HttpClient CreateClient()
         {
             var client = base.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.UserAdmin.Token);
             return client;
         }
+
+        public async Task AddDto<TEntity, TDto>(TDto dto)
+           where TEntity : class => await _repoHelper.InsertDto<TEntity, TDto>(dto);
+
+        public async ValueTask<TEntity> FindAsync<TEntity, TDto>(TDto dto)
+            where TEntity : class, IIds => await _repoHelper.SelectAsync<TEntity, TDto>(dto);
+
+        public async Task AddEntity<TEntity>(TEntity entity)
+            where TEntity : class => await _repoHelper.InsertEntity(entity);
 
         protected override void Dispose(bool disposing)
         {
