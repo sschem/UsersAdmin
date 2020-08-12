@@ -102,9 +102,9 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
             }
         }
 
-        new public HttpClient CreateClient()
+        public HttpClient CreateAuthenticatedAsAdminClient()
         {
-            var client = base.CreateClient();
+            var client = this.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.UserAdmin.Token);
             return client;
         }

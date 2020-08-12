@@ -6,7 +6,7 @@ using UsersAdmin.Core.Model.System;
 using UsersAdmin.Test.Integration.Controller.Factory;
 using Xunit;
 
-namespace UsersAdmin.Test.Integration.Controller.System
+namespace UsersAdmin.Test.Integration.Controller.SystemTests
 {
     [Collection("Controller collection")]
     public class SystemControllerPostTest
@@ -31,7 +31,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         {
             var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().PostAsync("/api/Systems/", msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
 
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
@@ -54,7 +54,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
             var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().PostAsync("/api/Systems/", msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -79,7 +79,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
             _systemDto.Name = name;
             var msgContent = _fixture.CreateMessageContent(_systemDto);
 
-            var response = await _fixture.CreateClient().PostAsync("/api/Systems/", msgContent);
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().PostAsync("/api/Systems/", msgContent);
             var responseString = await response.Content.ReadAsStringAsync();
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
 

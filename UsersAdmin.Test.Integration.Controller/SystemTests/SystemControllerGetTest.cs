@@ -9,7 +9,7 @@ using UsersAdmin.Services;
 using UsersAdmin.Test.Integration.Controller.Factory;
 using Xunit;
 
-namespace UsersAdmin.Test.Integration.Controller.System
+namespace UsersAdmin.Test.Integration.Controller.SystemTests
 {
     
     [Collection("Controller collection")]
@@ -68,7 +68,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
             _systemDto.Id = "Test.GetById.One";
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
 
-            var response = await _fixture.CreateClient().GetAsync("/api/Systems/" + _systemDto.Id);
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems/" + _systemDto.Id);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -88,7 +88,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
         [Fact]
         public async void GetById_ObtainNull()
         {
-            var response = await _fixture.CreateClient().GetAsync("/api/Systems/NOT_EXISTS");
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems/NOT_EXISTS");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -115,7 +115,7 @@ namespace UsersAdmin.Test.Integration.Controller.System
             };
             await _fixture.AddEntity(userSystemEntity);
 
-            var response = await _fixture.CreateClient().GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);

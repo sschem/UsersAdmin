@@ -24,14 +24,16 @@ namespace UsersAdmin.Test.Integration.Controller
         [InlineData("/api/Users")]
         public async void GetAllEndpoints_AreAnswersOfIEnumerables(string url)
         {
-            var response = await _fixture.CreateClient().GetAsync(url);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync(url);
             var responseString = await response.Content.ReadAsStringAsync();
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
+
             var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<Object>>>(responseString);
-            
-            Assert.Equal("application/json; charset=utf-8", response.Content.Headers.ContentType.ToString());
             answer.Code.Should().Be(Answer.OK_CODE);
+            answer.IsWarning.Should().Be(false);
+            answer.IsError.Should().Be(false);
             answer.Content.Should().NotBeNull();
         }
     }

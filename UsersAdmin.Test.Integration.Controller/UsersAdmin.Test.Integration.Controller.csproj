@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="System\**" />
-    <Content Remove="System\**" />
-    <EmbeddedResource Remove="System\**" />
-    <None Remove="System\**" />
+    <Compile Remove="SystemTests\**" />
+    <Content Remove="SystemTests\**" />
+    <EmbeddedResource Remove="SystemTests\**" />
+    <None Remove="SystemTests\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="System\SystemControllerDeleteTest.cs" />
-    <Compile Include="System\SystemControllerGetTest.cs" />
-    <Compile Include="System\SystemControllerPostTest.cs" />
-    <Compile Include="System\SystemControllerPutTest.cs" />
+    <Compile Include="SystemTests\SystemControllerDeleteTest.cs" />
+    <Compile Include="SystemTests\SystemControllerGetTest.cs" />
+    <Compile Include="SystemTests\SystemControllerPostTest.cs" />
+    <Compile Include="SystemTests\SystemControllerPutTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

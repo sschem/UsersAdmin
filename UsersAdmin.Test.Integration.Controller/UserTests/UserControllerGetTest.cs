@@ -8,7 +8,7 @@ using UsersAdmin.Services;
 using UsersAdmin.Test.Integration.Controller.Factory;
 using Xunit;
 
-namespace UsersAdmin.Test.Integration.Controller.User
+namespace UsersAdmin.Test.Integration.Controller.UserTests
 {
     [Collection("Controller collection")]
     public class UserControllerGetTest
@@ -37,7 +37,7 @@ namespace UsersAdmin.Test.Integration.Controller.User
             await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
 
-            var response = await _fixture.CreateClient().GetAsync("/api/Users");
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Users");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -59,7 +59,7 @@ namespace UsersAdmin.Test.Integration.Controller.User
             await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
 
-            var response = await _fixture.CreateClient().GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
