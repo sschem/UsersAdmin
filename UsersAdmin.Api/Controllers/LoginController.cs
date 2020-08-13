@@ -24,8 +24,15 @@ namespace UsersAdmin.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Answer<UserLoggedDto>>> Login(UserLoginDto user)
         {
-            var validatedUser = await _service.GetValidated(user);
+            var validatedUser = await _service.LoginAsync(user);
             return Ok(new Answer<UserLoggedDto>(validatedUser));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("{systemId}")]
+        public async Task<ActionResult<Answer<UserLoggedDto>>> LoginBySystem(UserLoginDto user, string systemId)
+        {
+            throw new System.NotImplementedException("Login by systemId is not implemented!");
         }
     }
 }

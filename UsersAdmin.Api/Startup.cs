@@ -100,8 +100,9 @@ namespace UsersAdmin.Api
 
             services.AddAuthorization(config =>
             {
-                config.AddPolicy(Policies.ADMIN_ROLE, Policies.AdminPolicy());
-                config.AddPolicy(Policies.USER_ROLE, Policies.UserPolicy());
+                config.AddPolicy(Policies.ADMIN_POLICY, Policies.AdminPolicy());
+                config.AddPolicy(Policies.USER_POLICY, Policies.UserPolicy());
+                config.AddPolicy(Policies.SYSTEM_ADMIN_POLICY, Policies.SystemAdminPolicy());
             });
 
             services.AddSwaggerGen(c =>

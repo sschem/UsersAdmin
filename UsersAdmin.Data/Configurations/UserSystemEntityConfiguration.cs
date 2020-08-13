@@ -30,6 +30,12 @@ namespace UsersAdmin.Data.Configurations
                 .HasColumnName("systemid")
                 .HasColumnType("varchar(50)");
 
+            builder.Property(e => e.Role)
+                .IsRequired()
+                .HasColumnName("userrole")
+                .HasColumnType("varchar(12)")
+                .HasConversion(r => r.ToString(), r => (UserRole)Enum.Parse(typeof(UserRole), r));
+
             builder.HasOne(d => d.System)
                 .WithMany(p => p.UserSystemLst)
                 .HasForeignKey(d => d.SystemId)

@@ -41,11 +41,10 @@ namespace UsersAdmin.Data.Configurations
                 .HasColumnName("userpass")
                 .HasColumnType("varchar(50)");
 
-            builder.Property(e => e.Role)
+            builder.Property(e => e.IsAdmin)
                 .IsRequired()
-                .HasColumnName("userrole")
-                .HasColumnType("varchar(10)")
-                .HasConversion(r => r.ToString(), r => (UserRole)Enum.Parse(typeof(UserRole), r));
+                .HasColumnName("isadmin")
+                .HasColumnType("bit");
         }
     }
 }

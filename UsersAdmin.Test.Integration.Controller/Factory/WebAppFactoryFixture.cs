@@ -82,8 +82,11 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
             //Used to give the config value.
             //var jwtConfig = _configuration.GetSection("JwtConfig").Get<JwtConfig>();
             _tokenProvider = services.BuildServiceProvider().GetService<ITokenProvider>();
-            this.UserAdmin = new UserLoggedDto() { Id = "ADMIN", Name = "Administrator", Role = "Admin" };
-            this.UserAdmin.Token = _tokenProvider.BuildToken(this.UserAdmin);
+            UserEntity userEntity = new UserEntity() { Id = "ADMIN", Name = "Administrator", IsAdmin = true };
+            this.UserAdmin = _repoHelper.MapperInstance.Map<UserLoggedDto>(userEntity);
+            var tokenInfo = _tokenProvider.BuildToken(userEntity, null);
+            this.UserAdmin.Token = tokenInfo.Token;
+            this.UserAdmin.Role = tokenInfo.Role;
         }
 
         public StringContent CreateMessageContent(object dto)
@@ -95,11 +98,9 @@ namespace UsersAdmin.Test.Integration.Controller.Factory
 
         public Task ClearCache(string cacheKey)
         {
-            using (var scope = ScopeFactory.CreateScope())
-            {
-                var cache = scope.ServiceProvider.GetService<IDistributedCache>();
-                return cache.RemoveAsync(cacheKey);
-            }
+            using var scope = ScopeFactory.CreateScope();
+            var cache = scope.ServiceProvider.GetService<IDistributedCache>();
+            return cache.RemoveAsync(cacheKey);
         }
 
         public HttpClient CreateAuthenticatedAsAdminClient()

@@ -42,7 +42,7 @@ namespace UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{userId}")]
-        [Authorize(Policy = Policies.ADMIN_ROLE)]
+        [Authorize(Policy = Policies.ADMIN_POLICY)]
         [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<UserDto>>> GetUser(string userId)
         {

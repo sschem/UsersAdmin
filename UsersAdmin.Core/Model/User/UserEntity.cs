@@ -13,11 +13,17 @@ namespace UsersAdmin.Core.Model.User
         }
 
         public string Id { get; set; }
+        
         public string Pass { get; set; }
+        
         public string Name { get; set; }
+        
         public string Email { get; set; }
+        
         public string Description { get; set; }
-        public UserRole Role { get; set; }
+        
+        public bool IsAdmin { get; set; }
+        
         public List<UserSystemEntity> UserSystemLst { get; set; }
 
         public object[] GetIds => new object[] { Id };

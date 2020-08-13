@@ -4,6 +4,6 @@ namespace UsersAdmin.Core.Security
 {
     public interface ITokenProvider
     {
-        string BuildToken(UserLoggedDto user);
+        TokenInfo BuildToken(UserEntity user, string systemId);
     }
 }

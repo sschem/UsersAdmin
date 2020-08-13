@@ -34,7 +34,7 @@ namespace UsersAdmin.Test.Integration.Controller.AuthTests
         public async void Login_LoginAsAdminOk()
         {
             _userDto.Id = "Test.Login.AsAdminOk";
-            _userDto.Role = "Admin";
+            _userDto.IsAdmin = true;
             await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
             var userLogin = new UserLoginDto() { Id = _userDto.Id, Pass = _userDto.Pass };
@@ -54,7 +54,7 @@ namespace UsersAdmin.Test.Integration.Controller.AuthTests
             answer.Content.Should().NotBeNull();
             answer.Content.Id.Should().Be(_userDto.Id);
             answer.Content.Name.Should().Be(_userDto.Name);
-            answer.Content.Role.Should().Be(_userDto.Role);
+            answer.Content.Role.Should().Be(UserRole.Admin.ToString());
             answer.Content.Token.Should().NotBeNullOrEmpty();
         }
 

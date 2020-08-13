@@ -13,5 +13,7 @@ namespace UsersAdmin.Core.Model.User
 
         public string SystemId { get; set; }
         public SystemEntity System { get; set; }
+
+        public UserRole Role { get; set; }
     }
 }

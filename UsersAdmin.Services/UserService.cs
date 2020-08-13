@@ -49,10 +49,13 @@ namespace UsersAdmin.Services
             return UserItems;
         }
 
-        public async Task<UserLoggedDto> GetValidated(UserLoginDto user)
+        public async Task<UserLoggedDto> LoginAsync(UserLoginDto user, string systemId = null)
         {
             var entities = await this.GetAllEntitiesAsync();
-            var validatedUser = entities.Where(u => user != null && u.Id == user.Id && u.Pass == user.Pass)
+            var validatedUser = entities
+                .Where(u => user != null && 
+                    u.Id == user.Id && u.Pass == user.Pass && 
+                    (u.IsAdmin || !string.IsNullOrEmpty(systemId)))
                 .FirstOrDefault();
 
             if (validatedUser == null)
@@ -61,9 +64,11 @@ namespace UsersAdmin.Services
             }
             else
             {
-                var userReturn = _mapper.Map<UserLoggedDto>(validatedUser);
-                userReturn.Token = _tokenProvider.BuildToken(userReturn);
-                return userReturn;
+                var userLogged = _mapper.Map<UserLoggedDto>(validatedUser);
+                var tokenInfo = _tokenProvider.BuildToken(validatedUser, systemId);
+                userLogged.Role = tokenInfo.Role;
+                userLogged.Token = tokenInfo.Token;
+                return userLogged;
             }
         }
     }
