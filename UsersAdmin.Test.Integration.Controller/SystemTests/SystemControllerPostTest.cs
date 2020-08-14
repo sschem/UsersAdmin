@@ -9,15 +9,13 @@ using Xunit;
 namespace UsersAdmin.Test.Integration.Controller.SystemTests
 {
     [Collection("Controller collection")]
-    public class SystemControllerPostTest
+    public class SystemControllerPostTest : ControllerBaseTest
     {
         private readonly SystemDto _systemDto;
-        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerPostTest(WebAppFactoryFixture fixture)
+        public SystemControllerPostTest(WebAppFactoryFixture fixture) :
+            base(fixture)
         {
-            _fixture = fixture;
-
             _systemDto = new SystemDto()
             {
                 Id = "Test.PostSystem.Id",
@@ -30,20 +28,9 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
         public async void PostSystem_PostOne()
         {
             var msgContent = _fixture.CreateMessageContent(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().PostAsync("/api/Systems/", msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
-
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
-
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-
+            await this.GetOkAnswerChecked(response, HttpStatusCode.Created);
             obtainedEntiy.Should().NotBeNull();
         }
 
@@ -53,17 +40,8 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
             _systemDto.Id = "PostSystem_PostExistent";
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
             var msgContent = _fixture.CreateMessageContent(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().PostAsync("/api/Systems/", msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
-            answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
-            answer.IsWarning.Should().Be(true);
-            answer.IsError.Should().Be(false);
+            await this.GetWarnAnswerChecked(response);
         }
 
         [Theory]
@@ -78,19 +56,9 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
             _systemDto.Id = id;
             _systemDto.Name = name;
             var msgContent = _fixture.CreateMessageContent(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().PostAsync("/api/Systems/", msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
-            answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
-            answer.IsWarning.Should().Be(true);
-            answer.IsError.Should().Be(false);
-
+            await this.GetWarnAnswerChecked(response);
             obtainedEntiy.Should().BeNull();
         }
     }

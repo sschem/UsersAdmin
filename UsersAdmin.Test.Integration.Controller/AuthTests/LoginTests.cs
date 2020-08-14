@@ -1,8 +1,12 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using UsersAdmin.Api.Answers;
+using UsersAdmin.Core.Model.System;
 using UsersAdmin.Core.Model.User;
 using UsersAdmin.Services;
 using UsersAdmin.Test.Integration.Controller.Factory;
@@ -11,50 +15,64 @@ using Xunit;
 namespace UsersAdmin.Test.Integration.Controller.AuthTests
 {
     [Collection("Controller collection")]
-    public class LoginTests
+    public class LoginTests : ControllerBaseTest
     {
         private readonly UserDto _userDto;
-        private readonly WebAppFactoryFixture _fixture;
+        private readonly SystemDto _systemDto;
 
-        public LoginTests(WebAppFactoryFixture fixture)
+        public LoginTests(WebAppFactoryFixture fixture) :
+            base(fixture)
         {
-            _fixture = fixture;
-
             _userDto = new UserDto()
             {
                 Id = null,
-                Name = "Test.GetUser.Name",
-                Description = "Test.GetUser.Description",
+                Name = "Test.Login.Name",
+                Description = "Test.Login.Description",
                 Email = "validuser@mail.com",
                 Pass = "validclearpass"
+            };
+
+            _systemDto = new SystemDto()
+            {
+                Id = null,
+                Name = "Test.Login.Name",
+                Description = "Test.Login.Description"
             };
         }
 
         [Fact]
-        public async void Login_LoginAsAdminOk()
+        public async void Login_LoginAsAdmin()
         {
-            _userDto.Id = "Test.Login.AsAdminOk";
+            _userDto.Id = "Test.Login.AsAdmin";
             _userDto.IsAdmin = true;
-            await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
             var userLogin = new UserLoginDto() { Id = _userDto.Id, Pass = _userDto.Pass };
             var msgContent = _fixture.CreateMessageContent(userLogin);
 
-            
             var response = await _fixture.CreateClient().PostAsync("/api/Login/", msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
+            var answer = await this.GetOkAnswerChecked<UserLoggedDto>(response);
 
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-
-            var answer = JsonConvert.DeserializeObject<Answer<UserLoggedDto>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().NotBeNull();
             answer.Content.Id.Should().Be(_userDto.Id);
             answer.Content.Name.Should().Be(_userDto.Name);
             answer.Content.Role.Should().Be(UserRole.Admin.ToString());
+            answer.Content.Token.Should().NotBeNullOrEmpty();
+        }
+
+        [Theory]
+        [InlineData("User")]
+        [InlineData("SystemAdmin")]
+        public async void Login_LoginAsOtherRoles(string role)
+        {
+            var userSystemEntity = this.GenerateUserSystemFormTest(role);
+            await _fixture.AddEntity(userSystemEntity);            
+            var msgContent = this.GenerateMessageContentForTest();
+            
+            var response = await _fixture.CreateClient().PostAsync($"/api/Login/{_systemDto.Id}", msgContent);
+            var answer = await this.GetOkAnswerChecked<UserLoggedDto>(response);
+
+            answer.Content.Id.Should().Be(_userDto.Id);
+            answer.Content.Name.Should().Be(_userDto.Name);
+            answer.Content.Role.Should().Be(role);
             answer.Content.Token.Should().NotBeNullOrEmpty();
         }
 
@@ -65,21 +83,33 @@ namespace UsersAdmin.Test.Integration.Controller.AuthTests
         [InlineData("X", "x")]
         public async void Login_LoginUserError(string userId, string userPass)
         {
-            await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             var userLogin = new UserLoginDto() { Id = userId, Pass = userPass };
             var msgContent = _fixture.CreateMessageContent(userLogin);
-
             var response = await _fixture.CreateClient().PostAsync("/api/Login/", msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
+            await this.GetWarnAnswerChecked(response);
+        }
 
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
+        private UserSystemEntity GenerateUserSystemFormTest(string role)
+        {
+            _userDto.Id = $"Test.Login.{role}";
+            _systemDto.Id = _userDto.Id;
+            _userDto.IsAdmin = false;
+            UserSystemEntity userSystemEntity = new UserSystemEntity
+            {
+                SystemId = _systemDto.Id,
+                System = _fixture.MapperInstance.Map<SystemEntity>(_systemDto),
+                UserId = _userDto.Id,
+                User = _fixture.MapperInstance.Map<UserEntity>(_userDto),
+                Role = (UserRole)Enum.Parse(typeof(UserRole), role)
+            };
+            return userSystemEntity;
+        }
 
-            var answer = JsonConvert.DeserializeObject<Answer<UserLoggedDto>>(responseString);
-            answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
-            answer.IsWarning.Should().Be(true);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().BeNull();
+        public StringContent GenerateMessageContentForTest()
+        {
+            var userLogin = new UserLoginDto() { Id = _userDto.Id, Pass = _userDto.Pass };
+            var msgContent = _fixture.CreateMessageContent(userLogin);
+            return msgContent;
         }
     }
 }

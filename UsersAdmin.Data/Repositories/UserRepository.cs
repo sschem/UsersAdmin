@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using UsersAdmin.Core.Model.User;
 using UsersAdmin.Core.Repositories;
@@ -20,6 +22,19 @@ namespace UsersAdmin.Data.Repositories
             
             var entities = this.SelectByFilter(predicate);
             return entities;
+        }
+
+        public UserEntity SelectIncludingSystems(string userId)
+        {
+            var entity = this.Context.Users.Where(u =>
+                    !string.IsNullOrEmpty(userId)
+                    && u.Id.ToUpper() == userId.ToUpper()
+                )
+                .Include(s => s.UserSystemLst)
+                .ThenInclude(us => us.System)
+                .FirstOrDefault();
+
+            return entity;
         }
     }
 }

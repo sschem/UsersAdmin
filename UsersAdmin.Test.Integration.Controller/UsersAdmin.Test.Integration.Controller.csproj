@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ControllerBaseTest.cs" />
     <Compile Remove="Testing.cs" />
   </ItemGroup>
 
@@ -41,6 +40,12 @@
     <ProjectReference Include="..\UsersAdmin.Core\UsersAdmin.Core.csproj" />
     <ProjectReference Include="..\UsersAdmin.Data\UsersAdmin.Data.csproj" />
     <ProjectReference Include="..\UsersAdmin.Services\UsersAdmin.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

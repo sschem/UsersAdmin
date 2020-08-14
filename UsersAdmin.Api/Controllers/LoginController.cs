@@ -24,7 +24,7 @@ namespace UsersAdmin.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Answer<UserLoggedDto>>> Login(UserLoginDto user)
         {
-            var validatedUser = await _service.LoginAsync(user);
+            var validatedUser = await _service.LoginAsAdminAsync(user);
             return Ok(new Answer<UserLoggedDto>(validatedUser));
         }
 
@@ -32,7 +32,8 @@ namespace UsersAdmin.Api.Controllers
         [HttpPost("{systemId}")]
         public async Task<ActionResult<Answer<UserLoggedDto>>> LoginBySystem(UserLoginDto user, string systemId)
         {
-            throw new System.NotImplementedException("Login by systemId is not implemented!");
+            var validatedUser = await _service.LoginInSystemAsync(user, systemId);
+            return Ok(new Answer<UserLoggedDto>(validatedUser));
         }
     }
 }

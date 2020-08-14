@@ -9,15 +9,13 @@ using Xunit;
 namespace UsersAdmin.Test.Integration.Controller.SystemTests
 {
     [Collection("Controller collection")]
-    public class SystemControllerPutTest
+    public class SystemControllerPutTest : ControllerBaseTest
     {
         private readonly SystemDto _systemDto;
-        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerPutTest(WebAppFactoryFixture fixture)
+        public SystemControllerPutTest(WebAppFactoryFixture fixture) :
+            base(fixture)
         {
-            _fixture = fixture;
-
             _systemDto = new SystemDto()
             {
                 Id = "Test.PutSystem.Id",
@@ -35,16 +33,8 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
             var msgContent = _fixture.CreateMessageContent(_systemDto);
 
             var response = await _fixture.CreateAuthenticatedAsAdminClient().PutAsync("/api/Systems/" + _systemDto.Id, msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-
-            var answer = JsonConvert.DeserializeObject<Answer>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
+            await this.GetOkAnswerChecked(response);
             
             obtainedEntiy.Should().NotBeNull();
             obtainedEntiy.Name.Should().Be(_systemDto.Name);
@@ -56,17 +46,8 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
         {
             _systemDto.Id = "PutSystem_PutNonExistent";
             var msgContent = _fixture.CreateMessageContent(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().PutAsync("/api/Systems/" + _systemDto.Id, msgContent);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer>(responseString);
-            answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
-            answer.IsWarning.Should().Be(true);
-            answer.IsError.Should().Be(false);
+            await this.GetWarnAnswerChecked(response);
         }
     }
 }

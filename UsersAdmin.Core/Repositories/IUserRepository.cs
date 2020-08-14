@@ -6,5 +6,7 @@ namespace UsersAdmin.Core.Repositories
     public interface IUserRepository : IRepository<UserEntity>
     {
         IEnumerable<UserEntity> SelectItemsByNameFilter(string nameFilter);
+
+        UserEntity SelectIncludingSystems(string userId);
     }
 }

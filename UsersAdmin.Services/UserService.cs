@@ -49,15 +49,39 @@ namespace UsersAdmin.Services
             return UserItems;
         }
 
-        public async Task<UserLoggedDto> LoginAsync(UserLoginDto user, string systemId = null)
+        public async Task<UserLoggedDto> LoginAsAdminAsync(UserLoginDto user)
         {
             var entities = await this.GetAllEntitiesAsync();
             var validatedUser = entities
-                .Where(u => user != null && 
-                    u.Id == user.Id && u.Pass == user.Pass && 
-                    (u.IsAdmin || !string.IsNullOrEmpty(systemId)))
+                .Where(u => user != null &&
+                    u.Id == user.Id && u.Pass == user.Pass &&
+                    u.IsAdmin)
                 .FirstOrDefault();
 
+            var userLogged = this.LoginUser(validatedUser);
+            return userLogged;
+        }
+
+        public async Task<UserLoggedDto> LoginInSystemAsync(UserLoginDto user, string systemId)
+        {
+            var entities = await this.GetAllEntitiesAsync();
+            var validatedUser = entities
+                .Where(u => user != null &&
+                    u.Id == user.Id && u.Pass == user.Pass &&
+                    !string.IsNullOrWhiteSpace(systemId))
+                .FirstOrDefault();
+            
+            if (validatedUser != null)
+            {
+                validatedUser = this.Repository.SelectIncludingSystems(validatedUser.Id);
+            }
+
+            var userLogged = this.LoginUser(validatedUser, systemId);
+            return userLogged;
+        }
+
+        private UserLoggedDto LoginUser(UserEntity validatedUser, string systemId = null)
+        {
             if (validatedUser == null)
             {
                 throw new WarningException(this.UserIncorrect);

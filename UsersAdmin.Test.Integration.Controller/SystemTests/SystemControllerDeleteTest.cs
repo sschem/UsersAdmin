@@ -9,15 +9,13 @@ using Xunit;
 namespace UsersAdmin.Test.Integration.Controller.SystemTests
 {
     [Collection("Controller collection")]
-    public class SystemControllerDeleteTest
+    public class SystemControllerDeleteTest : ControllerBaseTest
     {
         private readonly SystemDto _systemDto;
-        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerDeleteTest(WebAppFactoryFixture fixture)
+        public SystemControllerDeleteTest(WebAppFactoryFixture fixture) :
+            base(fixture)
         {
-            _fixture = fixture;
-
             _systemDto = new SystemDto()
             {
                 Id = null,
@@ -31,19 +29,9 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
         {
             _systemDto.Id = "Test.DeleteSystem.Ok";
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().DeleteAsync("/api/Systems/" + _systemDto.Id);
-            var responseString = await response.Content.ReadAsStringAsync();
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
-            
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            
+            await this.GetOkAnswerChecked(response);
             obtainedEntiy.Should().BeNull();
         }
 
@@ -52,20 +40,9 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
         {
             _systemDto.Id = "Test.DeleteSystem.No";
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().DeleteAsync("/api/Systems/NotExistent");
-            var responseString = await response.Content.ReadAsStringAsync();
-
             var obtainedEntiy = await _fixture.FindAsync<SystemEntity, SystemDto>(_systemDto);
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer>(responseString);
-            answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
-            answer.IsWarning.Should().Be(true);
-            answer.IsError.Should().Be(false);
-            
+            await this.GetWarnAnswerChecked(response);
             obtainedEntiy.Should().NotBeNull();
         }
     }

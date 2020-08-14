@@ -7,8 +7,11 @@ namespace UsersAdmin.Core.Services
     public interface IUserService : IService<UserDto, UserEntity>
     {
         Task<IEnumerable<UserItemDto>> GetAllItemsAsync();
+        
         Task<IEnumerable<UserItemDto>> GetItemsByNameFilter(string nameFilter);
 
-        Task<UserLoggedDto> LoginAsync(UserLoginDto user, string systemId = null);
+        Task<UserLoggedDto> LoginAsAdminAsync(UserLoginDto user);
+
+        Task<UserLoggedDto> LoginInSystemAsync(UserLoginDto user, string systemId);
     }
 }

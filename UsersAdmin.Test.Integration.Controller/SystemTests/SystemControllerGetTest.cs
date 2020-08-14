@@ -11,18 +11,16 @@ using Xunit;
 
 namespace UsersAdmin.Test.Integration.Controller.SystemTests
 {
-    
+
     [Collection("Controller collection")]
-    public class SystemControllerGetTest
+    public class SystemControllerGetTest : ControllerBaseTest
     {
         private readonly SystemDto _systemDto;
         private readonly UserDto _userDto;
-        private readonly WebAppFactoryFixture _fixture;
 
-        public SystemControllerGetTest(WebAppFactoryFixture fixture)
+        public SystemControllerGetTest(WebAppFactoryFixture fixture) :
+            base(fixture)
         {
-            _fixture = fixture;
-
             _systemDto = new SystemDto()
             {
                 Id = null,
@@ -46,18 +44,8 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
             _systemDto.Id = "Test.GetAllSystem.OK";
             await _fixture.ClearCache(SystemService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
-
             var response = await _fixture.CreateClient().GetAsync("/api/Systems");
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<SystemItemDto>>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().NotBeNull();
+            var answer = await this.GetOkAnswerChecked<IEnumerable<SystemItemDto>>(response);
             answer.Content.Should().NotBeEmpty();
             answer.Content.Should().Contain(s => s.SystemId == _systemDto.Id);
         }
@@ -67,18 +55,8 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
         {
             _systemDto.Id = "Test.GetById.One";
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems/" + _systemDto.Id);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().NotBeNull();
+            var answer = await this.GetOkAnswerChecked<SystemDto>(response);
             answer.Content.Id.Should().Be(_systemDto.Id);
             answer.Content.Name.Should().Be(_systemDto.Name);
             answer.Content.Description.Should().Be(_systemDto.Description);
@@ -89,16 +67,9 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
         public async void GetById_ObtainNull()
         {
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems/NOT_EXISTS");
-            var responseString = await response.Content.ReadAsStringAsync();
-
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
-            answer.Code.Should().Be(Answer.WARN_CODE_DEFAULT);
-            answer.IsWarning.Should().Be(true);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().BeNull();
+            await this.GetWarnAnswerChecked(response);
         }
 
         [Fact]
@@ -116,16 +87,8 @@ namespace UsersAdmin.Test.Integration.Controller.SystemTests
             await _fixture.AddEntity(userSystemEntity);
 
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems/" + _systemDto.Id + "/withUsers");
-            var responseString = await response.Content.ReadAsStringAsync();
+            var answer = await this.GetOkAnswerChecked<SystemDto>(response);
 
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer<SystemDto>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().NotBeNull();
             answer.Content.Id.Should().Be(_systemDto.Id);
             answer.Content.Name.Should().Be(_systemDto.Name);
             answer.Content.Description.Should().Be(_systemDto.Description);

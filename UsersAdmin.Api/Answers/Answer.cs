@@ -13,6 +13,8 @@ namespace UsersAdmin.Api.Answers
         public static int WARN_CODE_DEFAULT = 100;
 
         public static Answer OK_ANSWER = new Answer(OK_CODE, OK_MSG_DEFAULT, false, false);
+        public static Answer WARN_ANSWER = new Answer(WARN_CODE_DEFAULT, "", false, true);
+        public static Answer ERROR_ANSWER = new Answer(ERROR_CODE_DEFAULT, ERROR_MSG_DEFAULT, true, false);
 
         public Answer(int code, string message, bool isError, bool isWarning, string guid)
         {

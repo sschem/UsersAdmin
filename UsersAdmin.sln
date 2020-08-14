@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsersAdmin.Test.Unit.Reposi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsersAdmin.Test.Unit.Service", "UsersAdmin.Test.Unit.Service\UsersAdmin.Test.Unit.Service.csproj", "{ED7C29C2-5961-413D-8D30-45BBE1ED5EBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersAdmin.Test.Integration.Controller", "UsersAdmin.Test.Integration.Controller\UsersAdmin.Test.Integration.Controller.csproj", "{C0B420F6-C2FF-4BDD-A428-80ED268A8E49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsersAdmin.Test.Integration.Controller", "UsersAdmin.Test.Integration.Controller\UsersAdmin.Test.Integration.Controller.csproj", "{C0B420F6-C2FF-4BDD-A428-80ED268A8E49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

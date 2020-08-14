@@ -11,15 +11,13 @@ using Xunit;
 namespace UsersAdmin.Test.Integration.Controller.UserTests
 {
     [Collection("Controller collection")]
-    public class UserControllerGetTest
+    public class UserControllerGetTest : ControllerBaseTest
     {
         private readonly UserDto _userDto;
-        private readonly WebAppFactoryFixture _fixture;
 
-        public UserControllerGetTest(WebAppFactoryFixture fixture)
+        public UserControllerGetTest(WebAppFactoryFixture fixture) :
+            base(fixture)
         {
-            _fixture = fixture;
-
             _userDto = new UserDto()
             {
                 Id = null,
@@ -36,18 +34,8 @@ namespace UsersAdmin.Test.Integration.Controller.UserTests
             _userDto.Id = "Test.GetAllUser.OK";
             await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Users");
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-            
-            var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<UserItemDto>>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().NotBeNull();
+            var answer = await this.GetOkAnswerChecked<IEnumerable<UserItemDto>>(response);
             answer.Content.Should().NotBeEmpty();
             answer.Content.Should().Contain(s => s.UserId == _userDto.Id);
         }
@@ -58,18 +46,8 @@ namespace UsersAdmin.Test.Integration.Controller.UserTests
             _userDto.Id = "Test.GetByNameFilter";
             await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
-
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentType.ToString().Should().Be(_fixture.CONTENT_TYPE);
-
-            var answer = JsonConvert.DeserializeObject<Answer<IEnumerable<UserItemDto>>>(responseString);
-            answer.Code.Should().Be(Answer.OK_CODE);
-            answer.IsWarning.Should().Be(false);
-            answer.IsError.Should().Be(false);
-            answer.Content.Should().NotBeNull();
+            var answer = await this.GetOkAnswerChecked<IEnumerable<UserItemDto>>(response);
             answer.Content.Should().NotBeEmpty();
             answer.Content.Should().Contain(s => s.UserId == _userDto.Id);
         }

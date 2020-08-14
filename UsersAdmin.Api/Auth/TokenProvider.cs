@@ -20,7 +20,7 @@ namespace UsersAdmin.Api.Auth
             _jwtConfig = jwtConfig;
         }
 
-        public TokenInfo BuildToken(UserEntity user, string systemId)
+        public TokenInfo BuildToken(UserEntity user, string systemId = null)
         {
             var tokenInfo = new TokenInfo
             {
