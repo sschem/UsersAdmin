@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>Tatisoft.UsersAdmin.Api</PackageId>
+    <AssemblyName>Tatisoft.UsersAdmin.Api</AssemblyName>
+    <RootNamespace>Tatisoft.UsersAdmin.Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
@@ -27,8 +29,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UsersAdmin.Core\Tatisoft.UsersAdmin.Core.csproj" />
-    <ProjectReference Include="..\UsersAdmin.Data\Tatisoft.UsersAdmin.Data.csproj" />
-    <ProjectReference Include="..\UsersAdmin.Services\Tatisoft.UsersAdmin.Services.csproj" />
+    <ProjectReference Include="..\UsersAdmin.Core\UsersAdmin.Core.csproj" />
+    <ProjectReference Include="..\UsersAdmin.Data\UsersAdmin.Data.csproj" />
+    <ProjectReference Include="..\UsersAdmin.Services\UsersAdmin.Services.csproj" />
   </ItemGroup>
 </Project>

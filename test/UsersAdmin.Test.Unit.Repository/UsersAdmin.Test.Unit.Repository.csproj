@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>Tatisoft.UsersAdmin.Test.Unit.Repository</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\UsersAdmin.Core\Tatisoft.UsersAdmin.Core.csproj" />
-    <ProjectReference Include="..\..\src\UsersAdmin.Data\Tatisoft.UsersAdmin.Data.csproj" />
+    <ProjectReference Include="..\..\src\UsersAdmin.Core\UsersAdmin.Core.csproj" />
+    <ProjectReference Include="..\..\src\UsersAdmin.Data\UsersAdmin.Data.csproj" />
   </ItemGroup>
 
 </Project>

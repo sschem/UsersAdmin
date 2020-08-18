@@ -3,10 +3,12 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UsersAdmin.Core\Tatisoft.UsersAdmin.Core.csproj" />
+    <ProjectReference Include="..\UsersAdmin.Core\UsersAdmin.Core.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>Tatisoft.UsersAdmin.Services</PackageId>
+    <AssemblyName>Tatisoft.UsersAdmin.Services</AssemblyName>
+    <RootNamespace>Tatisoft.UsersAdmin.Services</RootNamespace>
   </PropertyGroup>
 </Project>

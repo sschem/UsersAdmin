@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>Tatisoft.UsersAdmin.Test.Unit.Service</AssemblyName>
+
+    <RootNamespace>Tatisoft.UsersAdmin.Test.Unit.Service</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\UsersAdmin.Core\Tatisoft.UsersAdmin.Core.csproj" />
-    <ProjectReference Include="..\..\src\UsersAdmin.Services\Tatisoft.UsersAdmin.Services.csproj" />
+    <ProjectReference Include="..\..\src\UsersAdmin.Core\UsersAdmin.Core.csproj" />
+    <ProjectReference Include="..\..\src\UsersAdmin.Services\UsersAdmin.Services.csproj" />
   </ItemGroup>
 
 </Project>
