@@ -1,0 +1,1 @@
+docker-compose up -d user-adm-redis-test

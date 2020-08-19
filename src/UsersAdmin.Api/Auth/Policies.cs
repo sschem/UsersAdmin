@@ -11,8 +11,8 @@ namespace Tatisoft.UsersAdmin.Api.Auth
     public class Policies
     {
         public const string ADMIN_POLICY = "AdminPolicy";
-        public const string USER_POLICY = "UserPolicy";
         public const string SYSTEM_ADMIN_POLICY = "SystemAdminPolicy";
+        public const string USER_POLICY = "UserPolicy";
 
         public static AuthorizationPolicy AdminPolicy()
         {
@@ -22,20 +22,27 @@ namespace Tatisoft.UsersAdmin.Api.Auth
                 .Build();
         }
 
-        public static AuthorizationPolicy UserPolicy()
-        {
-            return new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .RequireRole(UserRole.User.ToString())
-                .Build();
-        }
-
         public static AuthorizationPolicy SystemAdminPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireRole(UserRole.SystemAdmin.ToString())
-                //.RequireAssertion(context => context.User.HasClaim(c => c is List<Core.Model.System.SystemDto>));
+                .RequireRole(UserRole.SystemAdmin.ToString(), UserRole.Admin.ToString())
+                //TODO: access to httpContext for validate system (claim.systemId == httpCtx.systemId)
+                .RequireAssertion(context => 
+                    context.User.IsInRole(UserRole.Admin.ToString()) || 
+                    context.User.HasClaim(c => c.Type == "systemId"))
+                .Build();
+        }
+
+        public static AuthorizationPolicy UserPolicy()
+        {
+            return new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireRole(UserRole.User.ToString(), UserRole.SystemAdmin.ToString(), UserRole.Admin.ToString())
+                //TODO: access to httpContext for validate system (claim.systemId == httpCtx.systemId)
+                .RequireAssertion(context =>
+                    context.User.IsInRole(UserRole.Admin.ToString()) ||
+                    context.User.HasClaim(c => c.Type == "systemId"))
                 .Build();
         }
     }

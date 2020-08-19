@@ -6,6 +6,16 @@
     <IsPackable>false</IsPackable>
 
     <AssemblyName>Tatisoft.UsersAdmin.Test.Integration.Controller</AssemblyName>
+
+    <RootNamespace>Tatisoft.UsersAdmin.Test.Integration.Controller</RootNamespace>
+
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+
+    <UserSecretsId>ae9f1d8c-9e42-403d-b164-ecdbd41c8f34</UserSecretsId>
+
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +41,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
     <PackageReference Include="Respawn" Version="3.3.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />

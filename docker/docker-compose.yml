@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  user-adm-redis:
+    image: redis:6.0
+    ports: 
+      - "7079:6379"
+  
+  user-adm-redis-test:
+    image: redis:6.0
+    ports: 
+      - "7179:6379"
