@@ -52,15 +52,15 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [Authorize(Policy = Policies.ADMIN_POLICY)]
         public async Task<ActionResult<Answer<SystemDto>>> PostSystem(SystemDto system)
         {
             var resSystem = await _service.AddAsync(system);
             return CreatedAtAction(nameof(GetSystem), new { systemId = system.Id }, new Answer<SystemDto>(resSystem));
         }
 
-        [HttpPut("{systemId}")]
-        [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [HttpPut("{systemId}")]        
+        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
         public async Task<ActionResult<Answer>> PutSystem(string systemId, SystemDto system)
         {
             if (systemId != system.Id)

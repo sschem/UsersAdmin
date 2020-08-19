@@ -44,7 +44,7 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.SystemTests
             _systemDto.Id = "Test.GetAllSystem.OK";
             await _fixture.ClearCache(SystemService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
-            var response = await _fixture.CreateClient().GetAsync("/api/Systems");
+            var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Systems");
             var answer = await this.GetOkAnswerChecked<IEnumerable<SystemItemDto>>(response);
             answer.Content.Should().NotBeEmpty();
             answer.Content.Should().Contain(s => s.SystemId == _systemDto.Id);

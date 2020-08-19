@@ -59,6 +59,50 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
             throw new System.NotImplementedException("Implementation pending");
         }
 
+        [HttpPost]
+        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        public async Task<ActionResult<Answer<UserDto>>> PostUser(UserDto user)
+        {
+            var resUser = await _service.AddAsync(user);
+            return CreatedAtAction(nameof(GetUser), new { userId = user.Id }, new Answer<UserDto>(resUser));
+        }
+
+        [HttpPut("{systemId}")]
+        [Authorize(Policy = Policies.USER_POLICY)]
+        public async Task<ActionResult<Answer>> PutUser(string userId, UserDto user)
+        {
+            if (userId != user.Id)
+            {
+                throw new Core.Exceptions.WarningException("Diferentes IDs!");
+            }
+            await _service.Modify(user, userId);
+            return Ok(Answer.OK_ANSWER);
+        }
+
+        [HttpDelete("{systemId}")]
+        [Authorize(Policy = Policies.ADMIN_POLICY)]
+        public async Task<ActionResult<Answer>> DeleteUser(string userId)
+        {
+            await _service.Remove(userId);
+            return Ok(Answer.OK_ANSWER);
+        }
+
+        [HttpGet("{userId}/asocciate/{systemId}")]
+        [TypeFilter(typeof(JsonLogResultFilter))]
+        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        public async Task<ActionResult<Answer<UserDto>>> AssociateUserSystem(string userId, string systemId)
+        {
+            throw new System.NotImplementedException("Implementation pending");
+        }
+
+        [HttpGet("{userId}/unasocciate/{systemId}")]
+        [TypeFilter(typeof(JsonLogResultFilter))]
+        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        public async Task<ActionResult<Answer<UserDto>>> UnassociateUserSystem(string userId, string systemId)
+        {
+            throw new System.NotImplementedException("Implementation pending");
+        }
+
         [HttpGet("filterByName")]
         [TypeFilter(typeof(StringLogResultFilter))]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
