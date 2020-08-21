@@ -1,6 +1,7 @@
 ﻿using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Tatisoft.UsersAdmin.Core.Model.System;
 using Tatisoft.UsersAdmin.Core.Model.User;
 using Tatisoft.UsersAdmin.Core.Repositories;
 using Tatisoft.UsersAdmin.Core.Security;
@@ -13,6 +14,8 @@ namespace Tatisoft.UsersAdmin.Test.Unit.Service.User
     public class UserServiceTest
     {
         protected UserDto GetNewValidDto() => GetValidUserDto();
+
+        protected SystemDto GetNewValidSystemDto() => GetValidSystemDto();
 
         protected UserLoginDto GetNewValidLoginDto() => GetValidUserLoginDto();
 
@@ -39,13 +42,13 @@ namespace Tatisoft.UsersAdmin.Test.Unit.Service.User
         }
 
         protected (UserService Service, Mock<IUnitOfWork> MockUnitOfWork, Mock<IAppCache> MockCache)
-            GetNewService(IUserRepository repository)
+            GetNewService(IUserRepository repository, ISystemRepository systemRepo = null)
         {
-           return this.GetNewService(repository, UserRole.Admin.ToString());
+            return this.GetNewService(repository, UserRole.Admin.ToString(), systemRepo);
         }
 
         protected (UserService Service, Mock<IUnitOfWork> MockUnitOfWork, Mock<IAppCache> MockCache)
-            GetNewService(IUserRepository repository, string role)
+            GetNewService(IUserRepository repository, string role, ISystemRepository systemRepo = null)
         {
             var mockUnitOfWork = this.GetNewMockedUnitOfWork(repository);
 
@@ -57,7 +60,13 @@ namespace Tatisoft.UsersAdmin.Test.Unit.Service.User
             mockTokenProvider.Setup(t => t.BuildToken(It.IsAny<UserEntity>(), It.IsAny<string>()))
                 .Returns(new TokenInfo() { Token = "MockedToken", Role = role });
 
-            return (new UserService(mockUnitOfWork.Object, MapperInstance, mockCache.Object, mockTokenProvider.Object),
+            return (new UserService
+                (
+                    mockUnitOfWork.Object,
+                    MapperInstance, mockCache.Object,
+                    mockTokenProvider.Object,
+                    systemRepo
+                ),
                 mockUnitOfWork, mockCache);
         }
     }

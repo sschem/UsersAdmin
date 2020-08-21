@@ -32,7 +32,6 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.UserTests
         public async void GetAllUsers_ObtainAtLeastOne()
         {
             _userDto.Id = "Test.GetAllUser.OK";
-            await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Users");
             var answer = await this.GetOkAnswerChecked<IEnumerable<UserItemDto>>(response);
@@ -44,7 +43,6 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.UserTests
         public async void GetByNameFilter_ObtainOneAtLeast()
         {
             _userDto.Id = "Test.GetByNameFilter";
-            await _fixture.ClearCache(UserService.GET_ALL_CACHE_KEY);
             await _fixture.AddDto<UserEntity, UserDto>(_userDto);
             var response = await _fixture.CreateAuthenticatedAsAdminClient().GetAsync("/api/Users/filterByName?name=" + _userDto.Id.Substring(0,8));
             var answer = await this.GetOkAnswerChecked<IEnumerable<UserItemDto>>(response);

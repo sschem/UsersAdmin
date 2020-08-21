@@ -51,14 +51,6 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
             return Ok(new Answer<UserDto>(userDto));
         }
 
-        [HttpGet("{userId}/{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
-        [Authorize(Policy = Policies.USER_POLICY)]
-        public async Task<ActionResult<Answer<UserDto>>> GetUserBySystem(string userId, string systemId)
-        {
-            throw new System.NotImplementedException("Implementation pending");
-        }
-
         [HttpPost]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
         public async Task<ActionResult<Answer<UserDto>>> PostUser(UserDto user)
@@ -87,22 +79,6 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
             return Ok(Answer.OK_ANSWER);
         }
 
-        [HttpGet("{userId}/asocciate/{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
-        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
-        public async Task<ActionResult<Answer<UserDto>>> AssociateUserSystem(string userId, string systemId)
-        {
-            throw new System.NotImplementedException("Implementation pending");
-        }
-
-        [HttpGet("{userId}/unasocciate/{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
-        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
-        public async Task<ActionResult<Answer<UserDto>>> UnassociateUserSystem(string userId, string systemId)
-        {
-            throw new System.NotImplementedException("Implementation pending");
-        }
-
         [HttpGet("filterByName")]
         [TypeFilter(typeof(StringLogResultFilter))]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
@@ -110,6 +86,33 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         {
             var users = await _service.GetItemsByNameFilter(name);
             return Ok(new Answer<IEnumerable<UserItemDto>>(users));
+        }
+
+        [HttpGet("{userId}/{systemId}")]
+        [TypeFilter(typeof(JsonLogResultFilter))]
+        [Authorize(Policy = Policies.USER_POLICY)]
+        public async Task<ActionResult<Answer<UserDto>>> GetUserBySystem(string userId, string systemId)
+        {
+            var userDto = await _service.GetBySystemAsync(userId, systemId);
+            return Ok(new Answer<UserDto>(userDto));
+        }
+
+        [HttpGet("{userId}/asocciate/{systemId}")]
+        [TypeFilter(typeof(JsonLogResultFilter))]
+        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        public async Task<ActionResult<Answer<UserDto>>> AssociateUserSystem(string userId, string systemId)
+        {
+            await _service.AssociateUserSystemAsync(userId, systemId);
+            return Ok(Answer.OK_ANSWER);
+        }
+
+        [HttpGet("{userId}/unasocciate/{systemId}")]
+        [TypeFilter(typeof(JsonLogResultFilter))]
+        [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        public async Task<ActionResult<Answer<UserDto>>> UnassociateUserSystem(string userId, string systemId)
+        {
+            await _service.UnassociateUserSystemAsync(userId, systemId);
+            return Ok(Answer.OK_ANSWER);
         }
     }
 }

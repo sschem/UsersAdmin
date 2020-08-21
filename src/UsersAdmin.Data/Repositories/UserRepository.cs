@@ -36,5 +36,15 @@ namespace Tatisoft.UsersAdmin.Data.Repositories
 
             return entity;
         }
+
+        public void RemoveSystem(UserSystemEntity userSystem)
+        {
+            this.Context.UsersSystems.Remove(userSystem);
+        }
+
+        public void AddSystem(UserSystemEntity userSystem)
+        {
+            this.Context.UsersSystems.Add(userSystem);
+        }
     }
 }

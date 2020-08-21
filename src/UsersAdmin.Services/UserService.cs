@@ -14,13 +14,17 @@ namespace Tatisoft.UsersAdmin.Services
     {
         protected override IUserRepository Repository => _unitOfWork.Users;
         protected ITokenProvider _tokenProvider;
+        private readonly ISystemRepository _systemRepository;
 
         public virtual string UserIncorrect { get { return "Datos de Usuario incorrectos!"; } }
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IAppCache cache, ITokenProvider tokenProvider)
+        public virtual string UserSystemIncorrect { get { return "Datos de Usuario/Sistema incorrectos!"; } }
+
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IAppCache cache, ITokenProvider tokenProvider, ISystemRepository systemRepository)
             : base(unitOfWork, mapper, cache)
         {
             _tokenProvider = tokenProvider;
+            _systemRepository = systemRepository;
         }
 
         protected override void MapPropertiesForUpdate(UserEntity outdatedEntity, UserEntity newEntity)
@@ -78,6 +82,87 @@ namespace Tatisoft.UsersAdmin.Services
 
             var userLogged = this.LoginUser(validatedUser, systemId);
             return userLogged;
+        }
+
+        public async Task<UserDto> GetBySystemAsync(string userId, string systemId)
+        {
+            var userEntity = await this.GetUserWithSystem(userId, systemId);
+            return _mapper.Map<UserDto>(userEntity);
+        }
+
+        public async Task AssociateUserSystemAsync(string userId, string systemId)
+        {
+            var userEntity = this.Repository.SelectIncludingSystems(userId);
+            var systemEntity = await _systemRepository.SelectByIdAsync(systemId);
+            if (userEntity != null && systemEntity != null)
+            {
+                bool systemAlreadyAssociated = userEntity.UserSystemLst.Where(us => us.SystemId == systemId).Count() > 0;
+                if (!systemAlreadyAssociated)
+                {
+                    UserSystemEntity userSystemEntity = new UserSystemEntity()
+                    {
+                        User = userEntity,
+                        UserId = userId,
+                        System = systemEntity,
+                        SystemId = systemId
+                    };
+                    userEntity.UserSystemLst.Add(userSystemEntity);
+                    this.Repository.Update(userEntity);
+                    await _unitOfWork.CommitAsync();
+                }
+            }
+            else
+            {
+                throw new WarningException(this.UserSystemIncorrect);
+            }
+        }
+
+        public async Task UnassociateUserSystemAsync(string userId, string systemId)
+        {
+            var userEntity = this.Repository.SelectIncludingSystems(userId);
+            UserSystemEntity systemToRemove = null;
+            
+            if (userEntity != null)
+            {
+                systemToRemove = userEntity.UserSystemLst
+                    .Where(s => s.SystemId == systemId)
+                    .FirstOrDefault();
+                
+                if (systemToRemove != null)
+                {
+                    userEntity.UserSystemLst.Remove(systemToRemove);
+                    this.Repository.Update(userEntity);
+                    await _unitOfWork.CommitAsync();
+                }
+            }
+
+            if (userEntity == null || systemToRemove == null)
+            {
+                throw new WarningException(this.UserSystemIncorrect);
+            }
+        }
+
+        private async Task<UserEntity> GetUserWithSystem(string userId, string systemId)
+        {
+            var entities = await this.GetAllEntitiesAsync();
+            var userEntity = entities
+                .Where(u => u.Id == userId && !string.IsNullOrWhiteSpace(systemId))
+                .FirstOrDefault();
+
+            if (userEntity != null)
+            {
+                userEntity = this.Repository.SelectIncludingSystems(userEntity.Id);
+                userEntity.UserSystemLst = userEntity.UserSystemLst
+                    .Where(s => s.SystemId == systemId)
+                    .ToList();
+            }
+
+            if (userEntity == null || userEntity.UserSystemLst.Count == 0)
+            {
+                throw new WarningException(this.UserSystemIncorrect);
+            }
+
+            return userEntity;
         }
 
         private UserLoggedDto LoginUser(UserEntity validatedUser, string systemId = null)

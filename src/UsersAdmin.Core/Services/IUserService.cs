@@ -13,5 +13,11 @@ namespace Tatisoft.UsersAdmin.Core.Services
         Task<UserLoggedDto> LoginAsAdminAsync(UserLoginDto user);
 
         Task<UserLoggedDto> LoginInSystemAsync(UserLoginDto user, string systemId);
+
+        Task<UserDto> GetBySystemAsync(string userId, string systemId);
+
+        Task AssociateUserSystemAsync(string userId, string systemId);
+
+        Task UnassociateUserSystemAsync(string userId, string systemId);
     }
 }

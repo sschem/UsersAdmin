@@ -28,11 +28,6 @@ namespace Tatisoft.UsersAdmin.Test.Unit.Service.User
                 )
                 .Verifiable();
 
-            var tokenProviderMock = this.GetNewEmptyMockedTokenProvider();
-            tokenProviderMock.Setup(t => t.BuildToken(It.IsAny<UserEntity>(), It.IsAny<string>()))
-                .Returns(new TokenInfo() { Token = "Token", Role = UserRole.Admin.ToString() })
-                .Verifiable();
-
             var serviceMock = this.GetNewService(repositoryMock.Object);
 
             var obtainedDto = await serviceMock.Service.LoginAsAdminAsync(this.GetNewValidLoginDto());
