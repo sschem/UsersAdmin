@@ -25,8 +25,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet]
-        [TypeFilter(typeof(StringLogResultFilter))]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(StringLogResultFilter))]
         public async Task<ActionResult<Answer<IEnumerable<SystemItemDto>>>> GetAllSystems()
         {
             var systems = await _service.GetAllItemsAsync();
@@ -34,8 +34,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<SystemDto>>> GetSystem(string systemId)
         {
             var systemDto = await _service.GetByIdAsync(systemId);
@@ -43,8 +43,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{systemId}/withUsers")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public ActionResult<Answer<SystemDto>> GetWithUsers(string systemId)
         {
             var systems = _service.GetWithUsers(systemId);
@@ -53,6 +53,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
 
         [HttpPost]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<SystemDto>>> PostSystem(SystemDto system)
         {
             var resSystem = await _service.AddAsync(system);
@@ -61,6 +62,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
 
         [HttpPut("{systemId}")]        
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer>> PutSystem(string systemId, SystemDto system)
         {
             if (systemId != system.Id)
@@ -73,6 +75,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
 
         [HttpDelete("{systemId}")]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer>> DeleteSystem(string systemId)
         {
             await _service.Remove(systemId);

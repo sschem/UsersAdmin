@@ -26,8 +26,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet]
-        [TypeFilter(typeof(StringLogResultFilter))]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(StringLogResultFilter))]
         public async Task<ActionResult<Answer<IEnumerable<UserItemDto>>>> GetAllUsers()
         {
             string user = "NO_CLAIM_ID";
@@ -43,8 +43,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{userId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<UserDto>>> GetUser(string userId)
         {
             var userDto = await _service.GetByIdAsync(userId);
@@ -53,6 +53,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
 
         [HttpPost]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<UserDto>>> PostUser(UserDto user)
         {
             var resUser = await _service.AddAsync(user);
@@ -61,6 +62,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
 
         [HttpPut("{systemId}")]
         [Authorize(Policy = Policies.USER_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer>> PutUser(string userId, UserDto user)
         {
             if (userId != user.Id)
@@ -73,6 +75,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
 
         [HttpDelete("{systemId}")]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer>> DeleteUser(string userId)
         {
             await _service.Remove(userId);
@@ -80,8 +83,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("filterByName")]
-        [TypeFilter(typeof(StringLogResultFilter))]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
+        [TypeFilter(typeof(StringLogResultFilter))]
         public async Task<ActionResult<Answer<IEnumerable<UserItemDto>>>> GetByNameFilter(string name)
         {
             var users = await _service.GetItemsByNameFilter(name);
@@ -89,8 +92,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{userId}/{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
         [Authorize(Policy = Policies.USER_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<UserDto>>> GetUserBySystem(string userId, string systemId)
         {
             var userDto = await _service.GetBySystemAsync(userId, systemId);
@@ -98,8 +101,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{userId}/asocciate/{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<UserDto>>> AssociateUserSystem(string userId, string systemId)
         {
             await _service.AssociateUserSystemAsync(userId, systemId);
@@ -107,8 +110,8 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
         }
 
         [HttpGet("{userId}/unasocciate/{systemId}")]
-        [TypeFilter(typeof(JsonLogResultFilter))]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
+        [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer<UserDto>>> UnassociateUserSystem(string userId, string systemId)
         {
             await _service.UnassociateUserSystemAsync(userId, systemId);
