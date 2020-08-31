@@ -60,7 +60,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
             return CreatedAtAction(nameof(GetUser), new { userId = user.Id }, new Answer<UserDto>(resUser));
         }
 
-        [HttpPut("{systemId}")]
+        [HttpPut("{userId}")]
         [Authorize(Policy = Policies.USER_POLICY)]
         [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer>> PutUser(string userId, UserDto user)
@@ -73,7 +73,7 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
             return Ok(Answer.OK_ANSWER);
         }
 
-        [HttpDelete("{systemId}")]
+        [HttpDelete("{userId}")]
         [Authorize(Policy = Policies.ADMIN_POLICY)]
         [TypeFilter(typeof(JsonLogResultFilter))]
         public async Task<ActionResult<Answer>> DeleteUser(string userId)
@@ -100,19 +100,19 @@ namespace Tatisoft.UsersAdmin.Api.Controllers
             return Ok(new Answer<UserDto>(userDto));
         }
 
-        [HttpGet("{userId}/asocciate/{systemId}")]
+        [HttpGet("{userId}/associate/{systemId}")]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
         [TypeFilter(typeof(JsonLogResultFilter))]
-        public async Task<ActionResult<Answer<UserDto>>> AssociateUserSystem(string userId, string systemId)
+        public async Task<ActionResult<Answer>> AssociateUserSystem(string userId, string systemId)
         {
             await _service.AssociateUserSystemAsync(userId, systemId);
             return Ok(Answer.OK_ANSWER);
         }
 
-        [HttpGet("{userId}/unasocciate/{systemId}")]
+        [HttpGet("{userId}/unassociate/{systemId}")]
         [Authorize(Policy = Policies.SYSTEM_ADMIN_POLICY)]
         [TypeFilter(typeof(JsonLogResultFilter))]
-        public async Task<ActionResult<Answer<UserDto>>> UnassociateUserSystem(string userId, string systemId)
+        public async Task<ActionResult<Answer>> UnassociateUserSystem(string userId, string systemId)
         {
             await _service.UnassociateUserSystemAsync(userId, systemId);
             return Ok(Answer.OK_ANSWER);

@@ -44,6 +44,12 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.Factory
             where TEntity : class, IIds
         {
             TEntity entity = this.MapperInstance.Map<TEntity>(dto);
+            return await this.SelectByEntityAsync(entity);
+        }
+
+        public async ValueTask<TEntity> SelectByEntityAsync<TEntity>(TEntity entity)
+            where TEntity : class, IIds
+        {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetService<AuthDbContext>();

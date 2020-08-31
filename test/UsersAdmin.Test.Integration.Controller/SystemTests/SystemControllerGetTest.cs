@@ -1,8 +1,6 @@
 ﻿using FluentAssertions;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
-using Tatisoft.UsersAdmin.Api.Answers;
 using Tatisoft.UsersAdmin.Core.Model.System;
 using Tatisoft.UsersAdmin.Core.Model.User;
 using Tatisoft.UsersAdmin.Services;

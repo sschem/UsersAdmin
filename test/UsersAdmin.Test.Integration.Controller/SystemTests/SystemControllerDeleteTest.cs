@@ -1,7 +1,4 @@
 ﻿using FluentAssertions;
-using Newtonsoft.Json;
-using System.Net;
-using Tatisoft.UsersAdmin.Api.Answers;
 using Tatisoft.UsersAdmin.Core.Model.System;
 using Tatisoft.UsersAdmin.Test.Integration.Controller.Factory;
 using Xunit;

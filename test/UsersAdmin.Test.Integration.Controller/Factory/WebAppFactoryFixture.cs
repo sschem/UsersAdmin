@@ -118,11 +118,14 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.Factory
         public async Task AddDto<TEntity, TDto>(TDto dto)
            where TEntity : class => await _repoHelper.InsertDto<TEntity, TDto>(dto);
 
+        public async Task AddEntity<TEntity>(TEntity entity)
+            where TEntity : class => await _repoHelper.InsertEntity(entity);
+
         public async ValueTask<TEntity> FindAsync<TEntity, TDto>(TDto dto)
             where TEntity : class, IIds => await _repoHelper.SelectAsync<TEntity, TDto>(dto);
 
-        public async Task AddEntity<TEntity>(TEntity entity)
-            where TEntity : class => await _repoHelper.InsertEntity(entity);
+        public async ValueTask<TEntity> FindByEntityAsync<TEntity>(TEntity entity)
+            where TEntity : class, IIds => await _repoHelper.SelectByEntityAsync<TEntity>(entity);
 
         protected override void Dispose(bool disposing)
         {

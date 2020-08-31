@@ -1,7 +1,4 @@
 ﻿using FluentAssertions;
-using Newtonsoft.Json;
-using System.Net;
-using Tatisoft.UsersAdmin.Api.Answers;
 using Tatisoft.UsersAdmin.Core.Model.System;
 using Tatisoft.UsersAdmin.Test.Integration.Controller.Factory;
 using Xunit;
@@ -18,7 +15,7 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.SystemTests
         {
             _systemDto = new SystemDto()
             {
-                Id = "Test.PutSystem.Id",
+                Id = null,
                 Name = "Test.PutSystem.Name",
                 Description = "Test.PutSystem.Description"
             };
@@ -27,6 +24,7 @@ namespace Tatisoft.UsersAdmin.Test.Integration.Controller.SystemTests
         [Fact]
         public async void PutSystem_PutOne()
         {
+            _systemDto.Id = "PutSystem_PutOne";
             await _fixture.AddDto<SystemEntity, SystemDto>(_systemDto);
             _systemDto.Name = "UdatedName";
             _systemDto.Description = "UdatedDescription";
